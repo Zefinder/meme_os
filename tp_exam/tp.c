@@ -8,7 +8,7 @@
 #include <intr.h>
 #include <string.h>
 #include <cr.h>
-#include "printutils.h"
+#include "extend/print_utils.h"
 
 // Defines for priviliges
 #define KERNEL_PRIVILEGE 0
@@ -162,7 +162,7 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
 	debug("SYSCALL eax = 0x%x\n", ctx->gpr.eax.raw);
 	int esi = ctx->gpr.esi.raw;
 	if (esi < USER_ADDRESS) {
-		debug("Laisser fuiter de la donnée du noyau moi ? serieusement ^^ haha on me l avait pas sortie celle la depuis loooongtemps :)\n");
+		debug("Laisser fuiter de la donnée du noyau moi ? salami ^^ haha on me l avait pas sortie celle la depuis loooongtemps :)\n");
 	} else {
 		debug("%s\n", (char*) ctx->gpr.esi.raw);
 	}

@@ -1,5 +1,6 @@
 #include <debug.h>
 #include <segmem.h>
+#include <extend/print_utils.h>
 
 void print_gdt_content(gdt_reg_t gdtr_ptr) {
    seg_desc_t* gdt_ptr;
