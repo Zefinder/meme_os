@@ -1,40 +1,60 @@
-# SECOS
+# MemeOS
 
 ## Introduction
 
-secos-ng est la nouvelle version de [SECOS](https://github.com/sduverger/secos), 
-un projet éducatif permettant d'appliquer pas à pas les concepts d'OS abordés 
-en cours à l'aide de petits TPs.
+meme-os est une version de [SECOS](https://github.com/sduverger/secos) développée par Adrien Jakubiak et Nicolas Rigal et qui a pour but le développement d'un OS dans le cadre du cours d'OS.
 
 ## Pré-requis
 
-Le squelette de code de SECOS est écrit en C, assembleur x86, et comporte
-quelques utilisations d'assembleur "inline". Il est donc **recommandé de
-savoir lire et programmer en C et assembleur x86.** Compiler un programme
-avec GCC et savoir configurer des Makefiles également.
-
-Pour plus de documentation sur l'assembleur en ligne GCC :
-
- - https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
- - https://locklessinc.com/articles/gcc_asm/
- - https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
-
-Il peut également être utile de savoir utiliser les outils suivants :
-`objdump`, `readelf`.
+Un ordinateur, un compilateur C, qemu... Je pense que c'est suffisant !
 
 ## Installation et dépendences
 
-L'environnement de déploiement s'appuyant sur QEMU, il est nécessaire
-d'installer les paquets suivants :
+Si en tant que correcteur ce n'est pas déjà fait, voici comment il est possible d'installer tout ce qu'il y a à installer en deux commandes :
 
 ```bash
 bash$ sudo apt-get install qemu-system-x86 qemu-kvm gcc-multilib make git
-bash$ git clone https://github.com/agantet/secos-ng
+bash$ git clone https://github.com/Zefinder/meme_os.git
 ```
 
+## Implémentation
+
+MemeOS est un système d'exploitation 32 bits multitâches ayant 2 tâches principales :
+- Écrire dans une variable 
+- Lire la variable et l'afficher à l'écran
+
+D'autres fonctionnalités sont développées comme :
+- Création d'un gestionnaire de tâches
+- Création d'un shell avec quelques commandes disponibles (**TODO**)
+- Création de nouvelles tâches qui tournent en parallèle (**TODO**)
+
+Beaucoup de travail a été réalisé pour fournir un OS de cette qualité. Nous espérons qu'il vous plaira.
+
+## Spécifications
+
+Les spécifications ne sont pas nombreuses mais il est quand même intéressant de les noter
+
+### L'utilisateur
+
+L'utilisateur a des droits restreints (normal) et est forcément lancé par le noyau. Il a de base une page mémoire allouée mais il peut en demander une deuxième s'il s'étend trop (page fault). Bien sûr, il ne peut pas accéder aux données du noyau ! Chaque tâche est isolée des autres, faisant qu'il est impossible qu'une tâche puisse lire dans celle d'un autre.
+
+Pour demander la création d'une tâche, un appel système est lancé. Voici la liste des différents appels système implémentés : 
+|  Id   |       Description        |
+| :---: | :----------------------: |
+|   0   | Créer une nouvelle tâche |
+|   1   |    Arrêter une tâche     |
+|   2   |     Lancer le compte     |
+|   3   |    Arrêter le compte     |
+|   4   |      Lire le compte      |
+
+### Le noyau
+
+Un super pépin !
+
+**TODO A changer (retirer ?)**
 ## Arborescence
 
-Le code de SECOS est organisé de la façon suivante :
+Le code de MemeOS est organisé de la façon suivante :
 
 ```bash
 $ cd secos-ng ; ls
@@ -113,8 +133,6 @@ bootloader grub. Celui-ci est configuré pour charger le fichier `kernel.elf`
 depuis le disque dur "HDD0". Le fichier `kernel.elf` est notre noyau d'OS, il
 se trouve dans le répertoire de TP courant.
 
-
-
 ## Utilisation de l'environnement QEMU
 
 Le monitor de QEMU est utile car permet d'inspecter et debugger la machine
@@ -139,7 +157,3 @@ Pour quitter QEMU en mode monitor : **q**.
 Note : Le lancement de SECOS sous QEMU est configurable via le fichier
 [`config.mk`](./utils/config.mk) qui définit les options à passer à QEMU au
 démarrage.
-
-## Moyen de debug
-
-Lire [`README.DEBUG.md`](./README.DEBUG.md) qui contient une aide au debugging offert par l'environnement QEMU.

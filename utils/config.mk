@@ -7,7 +7,7 @@ LD         := $(shell which ld)
 RM         := $(shell which rm)
 FIND       := $(shell which find)
 GIT        := $(shell which git)
-RELEASE    := $(shell $(GIT) log -n 1 --no-merges --pretty=format:%h-%t)
+RELEASE    := 6.94.20
 
 # Compilation options
 CFLG_FP    := -mno-mmx -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4.1 \
