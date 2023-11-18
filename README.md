@@ -36,20 +36,54 @@ Les spécifications ne sont pas nombreuses mais il est quand même intéressant 
 
 ### L'utilisateur
 
-L'utilisateur a des droits restreints (normal) et est forcément lancé par le noyau. Il a de base une page mémoire allouée mais il peut en demander une deuxième s'il s'étend trop (page fault). Bien sûr, il ne peut pas accéder aux données du noyau ! Chaque tâche est isolée des autres, faisant qu'il est impossible qu'une tâche puisse lire dans celle d'un autre.
+L'utilisateur a des droits restreints (normal) et est forcément lancé par le pépin. Il a de base une page mémoire allouée mais il peut en demander une deuxième s'il s'étend trop (page fault). Bien sûr, il ne peut pas accéder aux données du pépin ! Chaque tâche est isolée des autres, faisant qu'il est impossible qu'une tâche puisse lire dans celle d'un autre.
 
 Pour demander la création d'une tâche, un appel système est lancé. Voici la liste des différents appels système implémentés : 
-|  Id   |       Description        |
-| :---: | :----------------------: |
-|   0   | Créer une nouvelle tâche |
-|   1   |    Arrêter une tâche     |
-|   2   |     Lancer le compte     |
-|   3   |    Arrêter le compte     |
-|   4   |      Lire le compte      |
+|  Id   |          Description          |
+| :---: | :---------------------------: |
+|   0   |   Créer une nouvelle tâche    |
+|   1   |       Arrêter une tâche       |
+|   2   |       Lancer le compte        |
+|   3   |       Arrêter le compte       |
+|   4   |        Lire le compte         |
+|   5   | Ecrire sur la sortie standard |
+|   6   | Ecrire sur l'entrée standard  |
 
-### Le noyau
+**TODO Ajouter les syscall au fur et à mesure**
 
-Un super pépin !
+### Le kernel
+
+Le kernel (aussi appelé pépin de MemeOS) est composé d'un gestionnaire de tâches qui permet à un utilisateur de créer de nouvelles tâches et d'un ordonnanceur. La politique de pagination du pépin est une politique que nous avons décidé d'appeler "la politique de Sauron" : le kernel voit tout ce qu'il se passe du côté utilisateur et peut intervenir sur n'importe quelle tâche utilisateur. Néanmoins, quand une tâche fait un appel système, il ne peut accéder qu'à ses pages à lui et à une partie de la mémoire pépin (appelée mémoire partagée). 
+
+Le gestionnaire de tâches contient un tableau de tâches qui s'exécutent en même temps. Il est possible d'exécuter jusqu'à 10 tâches de manière simultanée (9 si on enlève le shell). Si une 11e tâche est demandée, alors elle sera refusée. Si une tâche finit, alors elle libère sa place dans le tableau de tâches et une autre peut la remplacer. 
+
+L'ordonnanceur est un simple mécanisme de round-robin sur les tâches qui sont dans le tableau de tâches du gestionnaire. A noter que si la tâche a fait un appel système et que son nombre de quanta passe à 0, alors l'ordonnanceur réinitialisera son nombre de quantum et continuera à compter jusqu'à ce que le pépin rende la main à l'utilisateur. S'il passe une nouvelle fois à 0, alors le nombre de quantum ne sera pas réinitialisé et restera à 0 (il saute alors son prochain tour). 
+
+## Organisation de la mémoire
+
+| Adresse de début | Adresse de fin | Utilité             | Accès kernel | Accès utilisateur |
+| :--------------: | :------------: | :------------------ | :----------: | :---------------: |
+|     0x300000     |    0x33FFFF    | Mémoire kernel      |     [x]      |        [ ]        |
+|     0x340000     |    0x34FFFF    | Pile kernel         |     [x]      |        [ ]        |
+|     0x350000     |    0x366FFF    | PGD et PTB          |     [x]      |        [ ]        |
+|     0x367000     |    0x3FFFFF    | Non utilisé         |     [ ]      |        [ ]        |
+|     0x400000     |    0x413FFF    | Mémoire utilisateur |     [x]      |        [x]        |
+|     0x414000     |    0x4FFFFF    | Mémoire partagée    |     [x]      |        [x]        |
+
+- La mémoire kernel est la mémoire utilisée par le kernel pour stocker ses fonctions et autres variables fixes
+- La pile kernel est l'espace utilisé pour la pile du pépin, rien de plus...
+- Les PGD et PTB sont stockées après la pile. Il y a au maximum 11 PGD, donc les PGD s'arrêtent à 0x35AFFF. L'espace kernel à paginer (de 0x300000 à 0x36FFFF et de 0x400000 à 0x4FFFFF) demande 2 tables de pages. Chaque tâche utilisateur demande une table de pages (2 pages de 0x400000 à 0x413FFF et tout de 0x414000 à 0x4FFFFF). On a donc au maximum 12 tables de page. Une PGD a une taille de 0x1000 et une PTB aussi, donc on a besoin de 23*0x1000 = 0x17000 d'espace pour PGD et PTB.
+- L'espace non utilisé est là pour avoir une cohérence entre l'espace utilisateur et l'espace pépin. Il peut servir à ajouter des tâches simultanées.
+- La mémoire utilisateur est l'endroit où les tâches pourront vivre et demander des pages supplémentaires, le tout dans une harmonie tout relative.
+- La mémoire partagée est un mécanisme de partage de données entre tous les utilisateurs. Avec un appel système, une tâche peut demander une page dans cet espace et pouvoir écrire dedans. Pour avoir plus de détails il faut regarder la section suivante !
+
+### Mémoire partagée
+
+
+
+## Remerciements
+
+Merci à Anaïs Gantet pour le cours, les TPs et l'aide apportée durant les TPs. 
 
 **TODO A changer (retirer ?)**
 ## Arborescence
