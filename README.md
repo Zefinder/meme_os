@@ -20,11 +20,11 @@ bash$ git clone https://github.com/Zefinder/meme_os.git
 ## Implémentation
 
 MemeOS est un système d'exploitation 32 bits multitâches ayant 2 tâches principales :
-- Écrire dans une variable 
-- Lire la variable et l'afficher à l'écran
+- Écrire dans une variable (**TODO**)
+- Lire la variable et l'afficher à l'écran (**TODO**)
 
 D'autres fonctionnalités sont développées comme :
-- Création d'un gestionnaire de tâches
+- Création d'un gestionnaire de tâches (**TODO**)
 - Création d'un shell avec quelques commandes disponibles (**TODO**)
 - Création de nouvelles tâches qui tournent en parallèle (**TODO**)
 
@@ -48,6 +48,8 @@ Pour demander la création d'une tâche, un appel système est lancé. Voici la 
 |   4   |        Lire le compte         |
 |   5   | Ecrire sur la sortie standard |
 |   6   | Ecrire sur l'entrée standard  |
+|   7   |  Demander une page partagée   |
+|   8   |                               |
 
 **TODO Ajouter les syscall au fur et à mesure**
 
@@ -61,14 +63,14 @@ L'ordonnanceur est un simple mécanisme de round-robin sur les tâches qui sont 
 
 ## Organisation de la mémoire
 
-| Adresse de début | Adresse de fin | Utilité             | Accès kernel | Accès utilisateur |
-| :--------------: | :------------: | :------------------ | :----------: | :---------------: |
-|     0x300000     |    0x33FFFF    | Mémoire kernel      |     [x]      |        [ ]        |
-|     0x340000     |    0x34FFFF    | Pile kernel         |     [x]      |        [ ]        |
-|     0x350000     |    0x366FFF    | PGD et PTB          |     [x]      |        [ ]        |
-|     0x367000     |    0x3FFFFF    | Non utilisé         |     [ ]      |        [ ]        |
-|     0x400000     |    0x413FFF    | Mémoire utilisateur |     [x]      |        [x]        |
-|     0x414000     |    0x4FFFFF    | Mémoire partagée    |     [x]      |        [x]        |
+| Adresse de début | Adresse de fin | Utilité             |    Accès kernel    | Accès utilisateur  |
+| :--------------: | :------------: | :------------------ | :----------------: | :----------------: |
+|     0x300000     |    0x33FFFF    | Mémoire kernel      | :heavy_check_mark: |        :x:         |
+|     0x340000     |    0x34FFFF    | Pile kernel         | :heavy_check_mark: |        :x:         |
+|     0x350000     |    0x366FFF    | PGD et PTB          | :heavy_check_mark: |        :x:         |
+|     0x367000     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
+|     0x400000     |    0x413FFF    | Mémoire utilisateur | :heavy_check_mark: | :heavy_check_mark: |
+|     0x414000     |    0x4FFFFF    | Mémoire partagée    | :heavy_check_mark: | :heavy_check_mark: |
 
 - La mémoire kernel est la mémoire utilisée par le kernel pour stocker ses fonctions et autres variables fixes
 - La pile kernel est l'espace utilisé pour la pile du pépin, rien de plus...
