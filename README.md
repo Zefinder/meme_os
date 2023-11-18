@@ -49,7 +49,8 @@ Pour demander la création d'une tâche, un appel système est lancé. Voici la 
 |   5   | Ecrire sur la sortie standard |
 |   6   | Ecrire sur l'entrée standard  |
 |   7   |  Demander une page partagée   |
-|   8   |                               |
+|   8   |       Exécuter du code        |
+|   9   |   Lire la mémoire partagée    |
 
 **TODO Ajouter les syscall au fur et à mesure**
 
@@ -81,7 +82,9 @@ L'ordonnanceur est un simple mécanisme de round-robin sur les tâches qui sont 
 
 ### Mémoire partagée
 
+La mémoire partagée est un espace mémoire commune à tous les utilisateurs. Tout le monde a au minimum le droit de la lire au moyen d'un appel système de lecture. Elle n'est donc pas appropriée au stockage des mots de passe (sauf si on veut vivre dangereusement !). Les utilisateurs et le kernel peuvent demander jusqu'à 21 pages chacun, soit 0x15000 d'espace maximum par tâche (+ pépin).
 
+Lors du demande d'une page partagée, on peut la rendre accessible à l'écriture des autres utilisateurs et même à l'exécution ! Vos plus belles ROP-chains commencent ici !
 
 ## Remerciements
 
