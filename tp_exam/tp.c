@@ -76,7 +76,7 @@
 gdt_reg_t gdtr_ptr;
 idt_reg_t idtr_ptr;
 seg_desc_t gdt_ptr[SEGMENT_NUMBER];
-TSS_t TSS_entry;
+tss_t TSS_entry;
 
 pde32_t* pgd_entry = (pde32_t*) 0x600000;
 pte32_t* pte_entry = (pte32_t*) 0x601000;
@@ -205,7 +205,7 @@ void init_gdt() {
 	gdt_ptr[4] = create_flat_segment(SEG_DESC_DATA_RW, SEG_DESC_TYPE_DATACODE, USER_PRIVILEGE);
 
 	// TSS segment (system)
-	gdt_ptr[5] = create_segment((offset_t) &TSS_entry, sizeof(TSS_t), SEG_DESC_SYS_TSS_AVL_32,
+	gdt_ptr[5] = create_segment((offset_t) &TSS_entry, sizeof(tss_t), SEG_DESC_SYS_TSS_AVL_32,
 									SEG_DESC_TYPE_SYSTEM, KERNEL_PRIVILEGE, SEG_DESC_NO_GRANULAR);
 
 	gdtr_ptr.addr = (int) gdt_ptr;
