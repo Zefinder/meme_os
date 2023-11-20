@@ -55,8 +55,8 @@ void assertNotEquals_arr_short(short expected[], short got[], uint32_t array_siz
 void assertNotEquals_arr_int(int expected[], int got[], uint32_t array_size, const char* message);
 void assertNotEquals_arr_long(long expected[], long got[], uint32_t array_size, const char* message);
 
-// // Null equality
-// void assertNull(void* expected, char* message);
-// void assertNotNull(void* expected, char* message);
+// Null equality
+void assertNull(void* expected, char* message);
+void assertNotNull(void* expected, char* message);
 
 #endif

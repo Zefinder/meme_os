@@ -31,11 +31,20 @@ void test_string() {
     assertNotEquals_arr_char(tab1, tab3, 8, "Should be not equals since salutations are different...");
 }
 
+void test_nullity() {
+    int a[] = {1, 2};
+    int* b = 0;
+
+    assertNull(b, "Should be NULL");
+    assertNotNull(a, "Should be not NULL");
+}
+
 int main() {
     test_addition();
     test_soustraction();
     test_multiplication();
     test_uint8_tab();
     test_string();
+    test_nullity(); 
     return 0;
 }
