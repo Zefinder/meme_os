@@ -70,8 +70,8 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 |     0x340000     |    0x34FFFF    | Pile kernel         | :heavy_check_mark: |        :x:         |
 |     0x350000     |    0x366FFF    | PGD et PTB          | :heavy_check_mark: |        :x:         |
 |     0x367000     |    0x36FFFF    | Non utilisé         |        :x:         |        :x:         |
-|     0x370000     |    0x37013f    | GDT                 | :heavy_check_mark: |        :x:         |
-|     0x370140     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
+|     0x370000     |    0x370027    | GDT                 | :heavy_check_mark: |        :x:         |
+|     0x370028     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
 |     0x400000     |    0x413FFF    | Mémoire utilisateur | :heavy_check_mark: | :heavy_check_mark: |
 |     0x414000     |    0x4FFFFF    | Mémoire partagée    | :heavy_check_mark: | :heavy_check_mark: |
 
