@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: display files
+      run: ls -la 
     - name: move to kernel
       run: cd tp_exam
     - name: make kernel
