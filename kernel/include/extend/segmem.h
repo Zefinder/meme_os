@@ -3,7 +3,6 @@
 
 #include <segmem.h>
 
-
 /** Segment descriptor indexes **/
 #define c0_idx    1
 #define d0_idx    2
@@ -53,7 +52,7 @@
 #define gdt_set_tss_dsc(_dsc_,_tss_)                     \
    {                                                     \
       raw32_t addr = {.raw = _tss_};                     \
-      (_dsc_)->limit_1   = sizeof(tss_t);                \
+      (_dsc_)->limit_1   = TSS_LIMIT;                    \
       (_dsc_)->base_1    = addr.wlow;                    \
       (_dsc_)->base_2    = addr._whigh.blow;             \
       (_dsc_)->type      = SEG_DESC_SYS_TSS_AVL_32;      \
@@ -69,15 +68,15 @@
    }
 
 
-/*****************************************************/
-/**    Setups corresponding segment descriptor      **/
-/**                                                 **/
-/**     _desc_ : address of descriptor so setup     **/
-/*****************************************************/
-#define set_c0_dsc(_desc_)      gdt_set_flat_dsc(_desc_,0,SEG_DESC_CODE_XR)
-#define set_d0_dsc(_desc_)      gdt_set_flat_dsc(_desc_,0,SEG_DESC_DATA_RW)
-#define set_c3_dsc(_desc_)      gdt_set_flat_dsc(_desc_,3,SEG_DESC_CODE_XR)
-#define set_d3_dsc(_desc_)      gdt_set_flat_dsc(_desc_,3,SEG_DESC_DATA_RW)
+/****************************************************/
+/**    Setups corresponding segment descriptor     **/
+/**                                                **/
+/**     _dsc_ : address of descriptor so setup     **/
+/****************************************************/
+#define set_c0_dsc(_dsc_)      gdt_set_flat_dsc(_dsc_,0,SEG_DESC_CODE_XR)
+#define set_d0_dsc(_dsc_)      gdt_set_flat_dsc(_dsc_,0,SEG_DESC_DATA_RW)
+#define set_c3_dsc(_dsc_)      gdt_set_flat_dsc(_dsc_,3,SEG_DESC_CODE_XR)
+#define set_d3_dsc(_dsc_)      gdt_set_flat_dsc(_dsc_,3,SEG_DESC_DATA_RW)
 
 
 /******************************************************/
@@ -90,5 +89,8 @@
 #define gdt_set_d0_dsc(_gdt_)      set_d0_dsc(&(_gdt_)[d0_idx])
 #define gdt_set_c3_dsc(_gdt_)      set_c3_dsc(&(_gdt_)[c3_idx])
 #define gdt_set_d3_dsc(_gdt_)      set_d3_dsc(&(_gdt_)[d3_idx])
+
+
+void init_gdt(void);
 
 #endif

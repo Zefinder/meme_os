@@ -3,6 +3,7 @@
 
 #include <cr.h>
 #include <pagemem.h>
+#include <extend/memory.h>
 
 
 #define cr3_pgd_set(_cr3_,_pgd_)		\
@@ -67,5 +68,22 @@
 /**************************************************/
 #define ptb_forced_pte(_ptb_,_virt_,_phys_)				\
 	ptb_pte( &(_ptb_)[pt32_idx(_virt_)], _phys_ )
+
+
+/**************************************/
+/**    Returns the address of the    **/
+/**        nth PGD in memory         **/
+/**************************************/
+#define nth_pgd(n)	(pde32_t*)(PGD_START + n*PGD_SIZE)
+
+
+/**************************************/
+/**    Returns the address of the    **/
+/**        nth PTB in memory         **/
+/**************************************/
+#define nth_ptb(n)	(pte32_t*)(PTB_START + n*PTB_SIZE)
+
+
+void init_pgd(void);
 
 #endif
