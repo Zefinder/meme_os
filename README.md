@@ -72,8 +72,8 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 |     0x367000     |    0x36FFFF    | Non utilisé         |        :x:         |        :x:         |
 |     0x370000     |    0x370027    | GDT                 | :heavy_check_mark: |        :x:         |
 |     0x370028     |    0x37FFFF    | Non utilisé         |        :x:         |        :x:         |
-|     0x380000     |    0x38006B    | TSS                 | :heavy_check_mark: |        :x:         |
-|     0x38006C     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
+|     0x380000     |    0x382088    | TSS                 | :heavy_check_mark: |        :x:         |
+|     0x382089     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
 |     0x400000     |    0x413FFF    | Mémoire utilisateur | :heavy_check_mark: | :heavy_check_mark: |
 |     0x414000     |    0x4FFFFF    | Mémoire partagée    | :heavy_check_mark: | :heavy_check_mark: |
 
