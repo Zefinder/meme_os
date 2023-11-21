@@ -13,6 +13,7 @@
 /************************************************/
 #define go_ring_3(_esp_)                                                        	\
    {                                                                       		\
+      tss_t* TSS = (tss_t*)TSS_START;                                            \
       set_ds(d3_sel);                                                      		\
       set_es(d3_sel);                                                      		\
       set_fs(d3_sel);                                                      		\
@@ -40,9 +41,7 @@
 void tp() {
    init_gdt();
 
-   gdt_reg_t gdtr_ptr;
-   get_gdtr(gdtr_ptr);
-   print_gdt_content(gdtr_ptr);
+   print_gdt();
 
 	init_pgd();
 

@@ -38,7 +38,7 @@
 #define GDT_END     GDT_START + GDT_LIMIT
 
 #define TSS_START   0x380000
-#define TSS_LIMIT   sizeof(tss_t)
+#define TSS_LIMIT   sizeof(tss_t) - 1
 #define TSS_END     TSS_START + TSS_LIMIT
 
 
