@@ -2,7 +2,7 @@
 
 Afin de pouvoir vérifier son travail et pour s'assurer que tout fonctionne parfaitement en limitant les dégâts, nous avons implémenté une unité de tests unitaires.
 
-Attention, ces tests unitaires ne sont pas compilés comme le noyau. La librarie standard de C est présente ainsi que tous les super fonctionnalités intéressantes qu'il est possible d'inclure. Si on veut utiliser les fonctions du kernel de MemeOs, il faut faire attention à ce qu'il n'y ait pas de collision entre les inclusions !
+Attention, ces tests unitaires ne sont pas compilés comme le pépin. La librarie standard de C est présente ainsi que toutes les super fonctionnalités intéressantes qu'il est possible d'inclure. Si on veut utiliser les fonctions du kernel de MemeOs, il faut faire attention à ce qu'il n'y ait pas de collision entre les inclusions ! D'ailleurs, le chemin `kernel/include` est utilisé comme répertoire d'inclusion par gcc comme pour les TP.
 
 ## Créer un test
 

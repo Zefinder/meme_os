@@ -5,7 +5,7 @@
 #define ERROR_HEADER_FORMAT "\033[0;31m[ERROR] %s... "
 
 void exit_test(const char* message) {
-    printf("%s\033[0m\n", message);
+    printf("\033[0;31m%s\033[0m\n", message);
     exit(1);
 }
 
