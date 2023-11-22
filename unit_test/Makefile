@@ -1,4 +1,4 @@
 .PHONY: test
 
 test:
-	./test.sh
+	./test_script.sh

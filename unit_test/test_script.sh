@@ -5,6 +5,7 @@ WHITE='\033[1;37m'
 NO_COLOR='\033[0m'
 
 test_utils_c="test_utils.c"
+script_file="test_script.sh"
 test_file="test"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
@@ -35,7 +36,7 @@ compile_and_test () {
 }
 
 for filename in "${filenames[@]}"; do
-    if [ "$filename" != "$test_utils_c" ]; then
+    if [ "$filename" != "$test_utils_c" ] && [ "$filename" != "$script_file" ]; then
         # One new test
         test_number=$(($test_number + 1))
 
