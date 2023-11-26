@@ -1,6 +1,6 @@
 #include "test_utils.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define ERROR_HEADER_FORMAT "\033[0;31m[ERROR] %s... "
 

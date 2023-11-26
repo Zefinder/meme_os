@@ -9,6 +9,11 @@ script_file="test_script.sh"
 test_file="test"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
+CC="gcc"
+OPTIONS="-fms-extensions"
+INCLUDES="-I../kernel/include -I."
+objects=$@
+
 test_number=0
 has_error=0
 
@@ -17,7 +22,7 @@ compile_and_test () {
 
     # Compile
     echo -e ${WHITE}Compiling file $filename...${NO_COLOR}
-    gcc -I../kernel/include -I. -o $test_file $test_utils_c $filename
+    ${CC} ${OPTIONS} ${INCLUDES} -o $test_file $objects $test_utils_c $filename
     
     if [ $? -ne 0 ]; then
         echo -e ${RED}\[ERROR\] Impossible to compile $filename, check gcc error for more information...${NO_COLOR}
