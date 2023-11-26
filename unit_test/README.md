@@ -2,7 +2,7 @@
 
 Afin de pouvoir vérifier son travail et pour s'assurer que tout fonctionne parfaitement en limitant les dégâts, nous avons implémenté une unité de tests unitaires.
 
-Attention, ces tests unitaires ne sont pas compilés comme le pépin. La librarie standard de C est présente ainsi que toutes les super fonctionnalités intéressantes qu'il est possible d'inclure. Si on veut utiliser les fonctions du kernel de MemeOs, il faut faire attention à ce qu'il n'y ait pas de collision entre les inclusions ! D'ailleurs, le chemin `kernel/include` est utilisé comme répertoire d'inclusion par gcc comme pour les TP.
+Attention, ces tests unitaires ne sont pas compilés comme le pépin. La librarie standard de C est présente ainsi que toutes les super fonctionnalités intéressantes qu'il est possible d'inclure. Si on veut utiliser les fonctions du kernel de MemeOs, ben on peut pas donc on fait pas ! Si jamais la fonctionnalité repose sur une fonctionnalité pépin, alors on ne peut pas la tester... Néanmoins, le chemin `kernel/include` est utilisé comme répertoire d'inclusion par gcc comme pour les TP (pour les headers contenant seulement des constantes).
 
 ## Créer un test
 
@@ -44,4 +44,4 @@ Ce fichier de test va être considéré faux car le deuxième `assertEquals` de 
 
 ## Lancer un test
 
-Pour lancer un test il suffit tout simplement de taper `make test` et tout s'exécutera tout seul. Comment ça marche ? C'est tout simple ! Le Makefile va en réalité générer un script shell qui va lancer les exécutables uns à uns et tester leur code de retour. Si le code de retour est 0 alors tout s'est déroulé sans accroc ! Sinon aïe aïe aïe c'est qu'il y a une erreur et le message du test correspondant est affiché.
+Pour lancer un test il suffit tout simplement de taper `make` et tout s'exécutera tout seul. Comment ça marche ? C'est tout simple ! Le Makefile va en réalité générer un script shell qui va lancer les exécutables uns à uns et tester leur code de retour. Si le code de retour est 0 alors tout s'est déroulé sans accroc ! Sinon aïe aïe aïe c'est qu'il y a une erreur et le message du test correspondant est affiché.
