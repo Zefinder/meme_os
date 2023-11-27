@@ -1,6 +1,5 @@
 #!/usr/bin/make -f
 
-MAKEFLAGS  := --no-print-directory
 CC         := gcc
 INCLUDE    := -I../kernel/include
 CFLAGS	   := -pipe -nostdlib -nostdinc -ffreestanding -fms-extensions
@@ -11,9 +10,8 @@ define compile
 $(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $<
 endef
 
-exam_dir       := ../tp_exam/
-exam_obj   :=	task_manager.o
-objects    := $(addprefix $(exam_dir), $(exam_obj))
+sources := $(shell find ../tp_exam -name '*.c' -a -not '(' -name 'printutils.c' -o -name 'tp.c' ')')
+objects := $(patsubst %.c,%.o,$(sources))
 
 test: all
 	@./test_script.sh ${objects}
@@ -24,4 +22,4 @@ all: clean ${objects}
 	@$(compile)
 
 clean:
-	rm -f ${objects}
+	@rm -f ${objects}

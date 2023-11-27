@@ -7,3 +7,5 @@
 *.o
 *.elf
 /.vscode/
+*.o
+*.elf

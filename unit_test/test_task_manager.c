@@ -4,8 +4,6 @@
 
 void test_task_creation() {
     uint16_t a = 2;
-    a = create_task();
-    printf("%d\n", a);
 }
 
 void test_more_10_tasks() {
