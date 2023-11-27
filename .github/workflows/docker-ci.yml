@@ -24,7 +24,7 @@ jobs:
       run: docker image history 32bit/ubuntu:bionic
 
     - name: Launch test in docker
-      run: docker run -d -i 32bit/ubuntu:bionic sh
+      run: docker run 32bit/ubuntu:bionic sh
 
     - name: Print working directory
       run: docker exec 32bit/ubuntu:bionic pwd
