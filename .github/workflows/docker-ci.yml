@@ -16,4 +16,4 @@ jobs:
     - name: Gives execution privilige to script
       run: chmod +x ./build-image.sh
     - name: Build the Docker image
-      run: ./build-image.sh
+      run: sudo ./build-image.sh
