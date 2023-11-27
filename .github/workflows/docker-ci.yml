@@ -25,3 +25,9 @@ jobs:
 
     - name: Launch test in docker
       run: docker run -i 32bit/ubuntu:bionic sh
+
+    - name: Print working directory
+      run: pwd
+    
+    - name: List files
+      run: ls -la
