@@ -21,7 +21,7 @@ jobs:
       run: sudo ./build-image.sh
     
     - name: Check images 
-      run: docker image history ubuntu:16.04 
+      run: docker image history ubuntu:bionic
 
     - name: Launch test in docker
-      run: docker run -it ubuntu:16.04 sh
+      run: docker run -it ubuntu:bionic sh
