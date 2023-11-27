@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-kernel:
 
     runs-on: ubuntu-latest
 
@@ -21,7 +21,7 @@ jobs:
       run: sudo ./build-image.sh
     
     - name: Check images 
-      run: docker image history ubuntu:bionic
+      run: docker image history docker
 
     - name: Launch test in docker
       run: docker run -it ubuntu:bionic sh
