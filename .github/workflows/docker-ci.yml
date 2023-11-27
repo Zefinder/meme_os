@@ -13,6 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: docker-32bit/ubuntu@master
     - name: Build the Docker image
       run: ./build-image.sh
