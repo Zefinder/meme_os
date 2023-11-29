@@ -1,15 +1,13 @@
 #ifndef __STACKS__
 #define __STACKS__
 
-struct task_node {
-    struct task_t* value;
-    struct node* next_node;
-};
+// Inits the task stack
+void init_task_stack();
 
-// Pushes the task into the stack
-void push_task(struct task_t value);
+// Pushes the task index into the stack
+void push_task_index(int task_index);
 
-// Pops the task, removing it from the stack. Returns the pointer of the task variable
-struct task_t* pop_task();
+// Pops the task index that is ready to use, removing it from the stack. If none returns -1
+int pop_task_index();
 
 #endif
