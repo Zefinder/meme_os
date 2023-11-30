@@ -24,13 +24,15 @@
 #define PGD_SIZE        0x001000                            // Size in memory of 1 PGD
 #define PGD_START       PAGE_START                          // Start address of the first PGD (and thus all the PGDs)
 #define PGD_END         (PGD_START + NUM_PGD*PGD_SIZE - 1)  // End address of the first PGD (and thus all the PGDs)
-#define PGD_OFFSET      0x001000                            // Address offset that provokes a change in PDE (used for mapping)
+#define PGD_OFFSET      0x100000000                         // Memory that can be handled by one PGD (4GB)
+#define PDE_OFFSET      0x400000                            // Address offset that provokes a change in PDE (used for mapping)
 
 #define NUM_PTB         (NUM_PGD + 1)                       // Number of PTBs
 #define PTB_SIZE        0x001000                            // Size in memory of 1 PTB
 #define PTB_START       0x35b000                            // Start address of the first PTB (and thus all the PTBs)
 #define PTB_END         (PTB_START + NUM_PTB*PTB_SIZE - 1)  // End address of the first PTB (and thus all the PTBs)
-#define PTB_OFFSET      0x000010                            // Address offset that provokes a change in PTE (used for mapping)
+#define PTB_OFFSET      PDE_OFFSET                          // Memory that can be handled by one PTB (4MB)
+#define PTE_OFFSET      0x001000                            // Address offset that provokes a change in PTE (used for mapping)
 
 #define PAGE_END		PTB_END     // End address of paging related memory
 

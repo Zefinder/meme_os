@@ -3,16 +3,16 @@
 #include <extend/userland.h>
 #include <debug.h>
 
-// extern void idt_trampoline();
-
 void init_pgd()
 {
-    pde32_t* PGD = nth_pgd(0);
-    pte32_t* PTB = nth_ptb(0);		// PTB used by Kernel to access Kernel memory
-    pte32_t* PTB_USR = nth_ptb(1); 	// PTB used by Kernel to access User memory
+    pde32_t* PGD = nth_pgd_gbl(0);
+    pte32_t* PTB = nth_ptb_gbl(0);		// PTB used by Kernel to access Kernel memory
+    // pte32_t* PTB_USR = nth_ptb(1); 	// PTB used by Kernel to access User memory
 
 
+	/**********************************************************************************/
 	/*************** ALL MAPPINGS HERE ARE FOR KERNEL PGD AND PTBs ONLY ***************/
+	/**********************************************************************************/
 
 
 	/*************** Mapping addresses and setting up PGD and PTBs ***************/
@@ -32,18 +32,16 @@ void init_pgd()
 	krn_identity_map(&PGD[0], &PTB[0], (offset_t)&PTB[0], (offset_t)&PTB[0] + 2*PTB_SIZE - 1);
 
 	// Mapping memory where PGD is located so it can be accessed
-	pgd_krn_identity_pde(&PGD[0], &PTB[0], 0xc0000000);
-	ptb_krn_forced_pte(&PTB[0], 0xc0000000, (offset_t)&PGD[0]);
+	krn_forced_map(&PGD[0], &PTB[0], 0xc0000000, (offset_t)&PGD[0], PTE_OFFSET);
 
+	/*************** For testing only: map for user for testing ring 3 jump ***************/
+	/*********************  TODO: Should ultimately be kernel mapped  *********************/
 	// Mapping user memory
-	usr_identity_map(&PGD[0], &PTB_USR[0], USER_START, USER_END);
+	usr_identity_map(&PGD[0], &PTB[0], USER_START, USER_END); // USR
 
 	// Mapping userland, for now userland is in Kernel memory
-	usr_identity_map(&PGD[0], &PTB[0], (offset_t)userland, (offset_t)userland + PGD_OFFSET - 1);
-	usr_identity_map(&PGD[0], &PTB[0], (offset_t)printf, (offset_t)userland + PGD_OFFSET - 1);
-
-	// Mapping for testing only (67ef0)
-	usr_identity_map(&PGD[0], &PTB[0], 0x0, 0x100000-1); // See later what's there
+	usr_identity_map(&PGD[0], &PTB[0], (offset_t)userland, (offset_t)userland + PDE_OFFSET - 1);
+	usr_identity_map(&PGD[0], &PTB[0], (offset_t)printf, (offset_t)userland + PDE_OFFSET - 1);
 
 	/*************** Set registers ***************/
 	// Load PGD into CR3

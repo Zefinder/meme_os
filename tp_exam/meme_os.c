@@ -44,19 +44,6 @@ void tp() {
    // Init the PGD (duh)
 	init_pgd();
 
-   // Print CR3 to verify good execution
-	cr3_reg_t cr3;
-	cr3.raw = (uint32_t)get_cr3();
-
-	debug(
-		"\nCR3 :\n"
-		"	PWT 	-> %d\n"
-		"	PCD 	-> %d\n"
-		"	PD Base -> 0x%08x\n\n",
-		cr3.pwt, cr3.pcd, cr3.addr<<12
-		);
-
    // Jump into ring 3 for testing
    go_ring_3(USER_END);
-
 }

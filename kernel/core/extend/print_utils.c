@@ -1,5 +1,6 @@
 #include <debug.h>
 #include <segmem.h>
+#include <cr.h>
 #include <extend/print_utils.h>
 
 void print_gdt_content(gdt_reg_t gdtr_ptr)
@@ -48,11 +49,25 @@ void print_idtr(void)
 {
 	idt_reg_t idtr;
 	get_idtr(idtr);
+
 	debug(
 		"\nREG_IDTR :\n"
 		"    limit -> %u\n"
 		"    addr -> 0x%08lx\n",
-		idtr.limit,
-		idtr.addr
-	);
+		idtr.limit, idtr.addr
+      );
+}
+
+void print_cr3(void)
+{
+	cr3_reg_t cr3;
+	cr3.raw = (uint32_t)get_cr3();
+
+	debug(
+		"\nCR3 :\n"
+		"	PWT 	-> %d\n"
+		"	PCD 	-> %d\n"
+		"	PD Base -> 0x%08x\n\n",
+		cr3.pwt, cr3.pcd, cr3.addr<<12
+      );
 }
