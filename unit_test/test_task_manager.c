@@ -83,7 +83,129 @@ void test_more_10_tasks() {
 }
 
 void test_ask_new_page() {
-    // TODO
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    // We ask a second page
+    int ask_res = ask_second_page(0);
+    assert_equals_int(0, ask_res, "Page should have been given...");
+
+    struct task_t* got_tasks = show_tasks();
+    assert_equals_uint64(0, got_tasks[0].task_id, "Task id should be 0 since this is the first id...");
+    assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x401000, got_tasks[0].second_page_address, "Should be second user address (0x401000)...");
+    assert_equals_uint8(1, got_tasks[0].has_second_page, "Second page asked...");
+    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
+
+    for (int index = 1; index < 10; index++) {
+        struct task_t task = got_tasks[index];
+        assert_equals_uint64(0, task.task_id, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
+    }
+}
+
+void test_ask_new_page_yet_again() {
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    // We ask a second page
+    int ask_res = ask_second_page(0);
+    assert_equals_int(0, ask_res, "Page should have been given...");
+
+    // We ask a second page again
+    ask_res = ask_second_page(0);
+    assert_equals_int(1, ask_res, "Page already given...");
+}
+
+void test_ask_new_page_unknown_task() {
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    // We ask a second page
+    int ask_res = ask_second_page(10);
+    assert_equals_int(1, ask_res, "Task do not exist...");
+}
+
+void test_ask_new_page_dead_task() {
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    // We end it
+    int end_res = end_task(0);
+    assert_equals_int(0, end_res, "Task should be ended...");
+
+    // We ask a second page
+    int ask_res = ask_second_page(0);
+    assert_equals_int(1, ask_res, "Task is already dead...");
+}
+
+void test_ask_new_page_no_task() {
+    // We init task manager
+    init_task_manager();
+
+    // We ask a second page when no task created
+    int ask_res = ask_second_page(0);
+    assert_equals_int(1, ask_res, "No task created...");
+}
+
+void test_ask_new_page_new_task() {
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+    
+    // We ask a second page
+    int ask_res = ask_second_page(0);
+    assert_equals_int(0, ask_res, "Page should be given...");
+
+    // We end it
+    int end_res = end_task(0);
+    assert_equals_int(0, end_res, "Task should be ended...");
+
+    // We create a new task
+    create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    struct task_t* got_tasks = show_tasks();
+    assert_equals_uint64(1, got_tasks[0].task_id, "Second task created...");
+    assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0, got_tasks[0].second_page_address, "New task so no second page...");
+    assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page asked yet...");
+    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
+
+    for (int index = 1; index < 10; index++) {
+        struct task_t task = got_tasks[index];
+        assert_equals_uint64(0, task.task_id, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
+    }
 }
 
 void test_ask_shared_page() {
@@ -300,6 +422,11 @@ int main() {
     test_task_creation2();
     test_more_10_tasks();
     test_ask_new_page();
+    test_ask_new_page_yet_again();
+    test_ask_new_page_unknown_task();
+    test_ask_new_page_dead_task();
+    test_ask_new_page_no_task();
+    test_ask_new_page_new_task();
     test_ask_shared_page();
     test_ask_22_shared_pages();
     test_task_end1();    

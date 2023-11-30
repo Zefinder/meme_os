@@ -57,7 +57,29 @@ int create_task() {
 
 // Asks for a second page for the specified task id, returns 1 if fails (eg. already has a second page)
 int ask_second_page(uint64_t task_id) {
-    // If 
+    // Go through all running pages
+    for (int task_index = 0; task_index < TASK_NUMBER; task_index++) {
+        // If found we check if it already has a second page
+        if (running_tasks[task_index].task_id == task_id && running_tasks[task_index].is_alive) {
+            // If already has second page, returns 1
+            if (running_tasks[task_index].has_second_page) {
+                return 1;
+            }
+
+            // TODO Else asks for a user page
+            // TODO If address is -1 then return 1
+            // TODO Add in PTB
+
+            // Add page and address to task
+            running_tasks[task_index].second_page_address = 0x401000;
+            running_tasks[task_index].has_second_page = 1;
+            
+            return 0;
+        }
+    }    
+
+    // If not found then return 1
+    return 1;  
 }
 
 // Ends the task specified by its task id, return 1 if task couldn't be ended (eg. task id do not exist)
