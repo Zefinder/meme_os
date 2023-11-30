@@ -14,7 +14,7 @@ void init_gdt()
    // First segment always NULL
    GDT[0].raw = 0ull;
 
-
+	/*************** Setting segments in GDT ***************/
    // Set kernel code and data segments (flat)
    set_c0_dsc(&GDT[c0_idx]);
    set_d0_dsc(&GDT[d0_idx]);
@@ -26,12 +26,11 @@ void init_gdt()
    // Set TSS segment (system)
    gdt_set_tss_dsc(&GDT[ts_idx], (offset_t)TSS);
 
-
-   // Load into register
+	/***************** Setting registers ******************/
+   // Load into gdt register
    set_gdtr(gdtr);
 
-
-   // Initialize code and data segments to kernel segments
+   // Initialize segment registers to kernel segments
    set_cs(c0_sel);
 
    set_ss(d0_sel);

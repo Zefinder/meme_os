@@ -14,6 +14,8 @@ void init_pgd()
 
 	/*************** ALL MAPPINGS HERE ARE FOR KERNEL PGD AND PTBs ONLY ***************/
 
+
+	/*************** Mapping addresses and setting up PGD and PTBs ***************/
 	// Mapping kernel memory
 	krn_identity_map(&PGD[0], &PTB[0], KERNEL_START, KERNEL_END);
 
@@ -43,12 +45,13 @@ void init_pgd()
 	// Mapping for testing only (67ef0)
 	usr_identity_map(&PGD[0], &PTB[0], 0x0, 0x100000-1); // See later what's there
 
-
+	/*************** Set registers ***************/
+	// Load PGD into CR3
 	cr3_reg_t cr3;
 	cr3_pgd_set(&cr3, &PGD[0]);
 	set_cr3(cr3);
 
-    // Enable paging
+    // Enable paging in CR0
 	cr0_reg_t cr0;
 	cr0.raw = get_cr0();
 	cr0_pg_en(&cr0);

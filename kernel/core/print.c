@@ -163,7 +163,8 @@ size_t __vsnprintf(char *buffer, size_t len,
                    const char *format, va_list params)
 {
    buffer_t buf;
-   size_t   size, precision=0;
+   size_t   size;
+   size_t precision = 0;
    char     c;
    bool_t   interp, lng;
 
@@ -255,7 +256,7 @@ size_t __vsnprintf(char *buffer, size_t len,
 
             // do not ignore padding & precision for %x
          } else if (c >= '0' && c <= '9') {
-            precision = (size_t)(c-'0');
+            precision = (size_t)(c - '0');
             continue;
 
             // escaped '%'

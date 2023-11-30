@@ -35,14 +35,13 @@
 
 
 void tp() {
-   debug("intr: %p\n", intr_hdlr);
-
+   // Init the GDT (duh)
    init_gdt();
-   // Print gdt to verify good execution
-   print_gdt();
 
+   // Init the TSS (duh)
    init_tss();
 
+   // Init the PGD (duh)
 	init_pgd();
 
    // Print CR3 to verify good execution
@@ -56,11 +55,8 @@ void tp() {
 		"	PD Base -> 0x%08x\n\n",
 		cr3.pwt, cr3.pcd, cr3.addr<<12
 		);
-	
-   // pte32_t* PTB = nth_ptb(0);
-	// debug("Accès PTB réussi ! -> PTB[0] = 0x%08x\n", PTB[0].raw);
-	// debug("Accès PGD via 0xc0000000 réussi ! -> PGD[0] = 0x%08x\n", ((pde32_t*)0xc0000000)[0].raw);
 
+   // Jump into ring 3 for testing
    go_ring_3(USER_END);
 
 }
