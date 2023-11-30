@@ -22,4 +22,4 @@ all: clean ${objects}
 	@$(compile)
 
 clean:
-	@rm -f ${objects}
+	@rm -f ${objects} test

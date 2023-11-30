@@ -1,6 +1,56 @@
+#define _GNU_SOURCE
 #include "test_utils.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <dlfcn.h>
+
+// Taken from the GNU C Library to not import string.h (conflict)
+int __attribute__((no_instrument_function)) strncmp (const char *s1, const char *s2, size_t n) {
+    unsigned char c1 = '\0';
+    unsigned char c2 = '\0';
+    if (n >= 4) {
+        size_t n4 = n >> 2;
+        do {
+            c1 = (unsigned char) *s1++;
+            c2 = (unsigned char) *s2++;
+            if (c1 == '\0' || c1 != c2)
+            return c1 - c2;
+            c1 = (unsigned char) *s1++;
+            c2 = (unsigned char) *s2++;
+            if (c1 == '\0' || c1 != c2)
+            return c1 - c2;
+            c1 = (unsigned char) *s1++;
+            c2 = (unsigned char) *s2++;
+            if (c1 == '\0' || c1 != c2)
+            return c1 - c2;
+            c1 = (unsigned char) *s1++;
+            c2 = (unsigned char) *s2++;
+            if (c1 == '\0' || c1 != c2)
+            return c1 - c2;
+        } while (--n4 > 0);
+        n &= 3;
+    }
+    
+    while (n > 0) {
+        c1 = (unsigned char) *s1++;
+        c2 = (unsigned char) *s2++;
+        if (c1 == '\0' || c1 != c2) {
+            return c1 - c2;
+        }
+        n--;
+    }
+    return c1 - c2;
+}
+
+void __cyg_profile_func_enter (void*, void*) __attribute__((no_instrument_function));
+void __cyg_profile_func_enter (void* func, void* caller) {
+    Dl_info info;
+    if (dladdr(func, &info)) {
+        if (strncmp(info.dli_sname, "assert_", 7) && strncmp(info.dli_sname, "main", 4)) {
+            printf("Executing test function %s...\n", info.dli_sname ? info.dli_sname : "?");
+        }
+    }
+}
 
 #define ERROR_HEADER_FORMAT "\033[0;31m[ERROR] %s... "
 

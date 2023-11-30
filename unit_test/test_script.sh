@@ -10,7 +10,7 @@ test_file="test"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
 CC="gcc"
-OPTIONS="-fms-extensions"
+OPTIONS="-fms-extensions -rdynamic -finstrument-functions"
 INCLUDES="-I../kernel/include -I."
 objects=$@
 
@@ -22,7 +22,7 @@ compile_and_test () {
 
     # Compile
     echo -e ${WHITE}Compiling file $filename...${NO_COLOR}
-    ${CC} ${OPTIONS} ${INCLUDES} -o $test_file $objects $test_utils_c $filename
+    ${CC} ${OPTIONS} ${INCLUDES} -o $test_file $objects $test_utils_c $filename -ldl
     
     if [ $? -ne 0 ]; then
         echo -e ${RED}\[ERROR\] Impossible to compile $filename, check gcc error for more information...${NO_COLOR}
