@@ -163,7 +163,7 @@ size_t __vsnprintf(char *buffer, size_t len,
                    const char *format, va_list params)
 {
    buffer_t buf;
-   size_t   size;
+   size_t   size, precision=0;
    char     c;
    bool_t   interp, lng;
 
@@ -237,7 +237,7 @@ size_t __vsnprintf(char *buffer, size_t len,
             if(c == 'u')
                __format_add_udec(&buf, len, value);
             else
-               __format_add_hex(&buf, len, value, 0);
+               __format_add_hex(&buf, len, value, precision);
 
             // force size to 64 bits
          } else if(c == 'D'){
@@ -253,8 +253,9 @@ size_t __vsnprintf(char *buffer, size_t len,
             __format_add_str(&buf, len, "0x");
             __format_add_hex(&buf, len, value, 0);
 
-            // ignore padding, precision ...
+            // do not ignore padding & precision for %x
          } else if (c >= '0' && c <= '9') {
+            precision = (size_t)(c-'0');
             continue;
 
             // escaped '%'
@@ -267,6 +268,7 @@ size_t __vsnprintf(char *buffer, size_t len,
          }
 
          interp = false;
+         precision = 0;
          lng = false;
       }
       else if(c == '%')

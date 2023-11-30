@@ -64,6 +64,8 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 
 ## Organisation de la mémoire
 
+**Toute la mémoire mappée est *identity mappée*.**
+
 | Adresse de début | Adresse de fin | Utilité             |    Accès kernel    | Accès utilisateur  |
 | :--------------: | :------------: | :------------------ | :----------------: | :----------------: |
 |     0x300000     |    0x33FFFF    | Mémoire kernel      | :heavy_check_mark: |        :x:         |

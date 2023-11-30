@@ -39,7 +39,8 @@ core_obj   :=	entry.o \
 
 core_obj_ex	:=	pagemem.o		\
 				print_utils.o	\
-				segmem.o
+				segmem.o		\
+				userland.o
 
 objects    := $(addprefix $(CORE), $(core_obj))
 objects    += $(addprefix $(CORE_EX), $(core_obj_ex))

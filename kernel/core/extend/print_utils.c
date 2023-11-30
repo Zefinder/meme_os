@@ -43,3 +43,16 @@ void print_gdt(void)
    get_gdtr(gdtr_ptr);
    print_gdt_content(gdtr_ptr);
 }
+
+void print_idtr(void)
+{
+	idt_reg_t idtr;
+	get_idtr(idtr);
+	debug(
+		"\nREG_IDTR :\n"
+		"    limit -> %u\n"
+		"    addr -> 0x%08lx\n",
+		idtr.limit,
+		idtr.addr
+	);
+}

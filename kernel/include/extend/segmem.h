@@ -93,4 +93,6 @@
 
 void init_gdt(void);
 
+void init_tss(void);
+
 #endif
