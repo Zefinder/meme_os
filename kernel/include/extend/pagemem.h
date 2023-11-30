@@ -142,6 +142,26 @@
 	}
 
 
+/***********************************************************/
+/**    Maps memory with forced mapping                    **/
+/**                                                       **/
+/**    _pgd_   : address of PGD to use                    **/
+/**    _ptb_   : address of PTB to use                    **/
+/**    _start_ : logical start address of mapping         **/
+/**    _start_ : physical start address of mapping        **/
+/**    _size_  : size in bytes of the desired mapping     **/
+/***********************************************************/
+#define krn_forced_map(_pgd_,_ptb_,_lstart_,_pstart_,_size_)						\
+	{																				\
+		for(offset_t offset = 0; offset <= _size_ - 1; offset += PGD_OFFSET) {		\
+			pgd_krn_identity_pde((_pgd_), (_ptb_), _lstart_ + offset);				\
+		}																			\
+		for(offset_t offset = 0; offset <= _size_ - 1; offset += PTB_OFFSET) {		\
+			ptb_krn_forced_pte((_ptb_), _lstart_ + offset, _pstart_ + offset);		\
+		}																			\
+	}
+
+
 void init_pgd(void);
 
 #endif
