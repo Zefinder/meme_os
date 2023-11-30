@@ -1,7 +1,9 @@
 #include <debug.h>
 #include <segmem.h>
+#include <extend/print_utils.h>
 
-void print_gdt_content(gdt_reg_t gdtr_ptr) {
+void print_gdt_content(gdt_reg_t gdtr_ptr)
+{
    seg_desc_t* gdt_ptr;
    gdt_ptr = (seg_desc_t*)(gdtr_ptr.addr);
 
@@ -33,4 +35,24 @@ void print_gdt_content(gdt_reg_t gdtr_ptr) {
       gdt_ptr++;
       i++;
    }   
+}
+
+void print_gdt(void)
+{
+   gdt_reg_t gdtr_ptr;
+   get_gdtr(gdtr_ptr);
+   print_gdt_content(gdtr_ptr);
+}
+
+void print_idtr(void)
+{
+	idt_reg_t idtr;
+	get_idtr(idtr);
+	debug(
+		"\nREG_IDTR :\n"
+		"    limit -> %u\n"
+		"    addr -> 0x%08lx\n",
+		idtr.limit,
+		idtr.addr
+	);
 }
