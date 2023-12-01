@@ -27,11 +27,6 @@ void push_task_index(int value) {
 // Pops the task index that is ready to use, removing it from the stack. If none returns -1
 int pop_task_index() {
     // If no value is pointed (after TASK_NUMBER - 1), we return -1
-    if (task_stack_index == TASK_NUMBER) {
-        return -1;
-    }
-
     // Else we return the task index value and we increase the task_stack_index
-    int result = task_stack[task_stack_index++];
-    return result;
+    return task_stack_index == TASK_NUMBER ? -1 : task_stack[task_stack_index++];
 }

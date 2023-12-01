@@ -11,7 +11,7 @@ void test_task_manager_init() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -30,7 +30,7 @@ void test_task_creation1() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     for (int index = 1; index < 10; index++) {
@@ -39,7 +39,7 @@ void test_task_creation1() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -62,7 +62,7 @@ void test_task_creation2() {
         assert_equals_uint32(0x400000, task.first_page_address, "Should be first user address (0x400000)...");
         assert_equals_uint32(0, task.second_page_address, "Null since no second page...");
         assert_equals_uint8(0, task.has_second_page, "No second page by default...");
-        assert_equals_uint8(5, task.quanta, "Should be default quanta number (5)...");
+        assert_equals_uint8(5, task.quantum, "Should be default quantum number (5)...");
         assert_equals_uint8(1, task.is_alive, "Task should be alive...");
     }
 }
@@ -99,7 +99,7 @@ void test_ask_new_page() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0x401000, got_tasks[0].second_page_address, "Should be second user address (0x401000)...");
     assert_equals_uint8(1, got_tasks[0].has_second_page, "Second page asked...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     for (int index = 1; index < 10; index++) {
@@ -108,7 +108,7 @@ void test_ask_new_page() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -194,7 +194,7 @@ void test_ask_new_page_new_task() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "New task so no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page asked yet...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     for (int index = 1; index < 10; index++) {
@@ -203,7 +203,7 @@ void test_ask_new_page_new_task() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -234,7 +234,7 @@ void test_task_end1() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(0, got_tasks[0].is_alive, "Task should be dead...");
 
     for (int index = 1; index < 10; index++) {
@@ -243,7 +243,7 @@ void test_task_end1() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -269,14 +269,14 @@ void test_task_end2() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
     assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[1].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(0, got_tasks[1].is_alive, "Task should be dead...");
 
     for (int index = 2; index < 10; index++) {
@@ -285,7 +285,7 @@ void test_task_end2() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -314,14 +314,14 @@ void test_task_end3() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(0, got_tasks[0].is_alive, "Task should be dead...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
     assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[1].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(0, got_tasks[1].is_alive, "Task should be dead...");
 
     for (int index = 2; index < 10; index++) {
@@ -330,7 +330,7 @@ void test_task_end3() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }
@@ -360,14 +360,14 @@ void test_task_end_recreate() {
     assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[0].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
     assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
-    assert_equals_uint8(5, got_tasks[1].quanta, "Should be default quanta number (5)...");
+    assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
     assert_equals_uint8(1, got_tasks[1].is_alive, "Task should be alive...");
 
     for (int index = 2; index < 10; index++) {
@@ -376,7 +376,7 @@ void test_task_end_recreate() {
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
-        assert_equals_uint8(0, task.quanta, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
         assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
     }
 }

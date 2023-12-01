@@ -12,7 +12,7 @@ struct task_t {
     uint32_t first_page_address;
     uint32_t second_page_address;
     uint8_t has_second_page;
-    uint8_t quanta;
+    uint8_t quantum;
     uint8_t is_alive;
 };
 

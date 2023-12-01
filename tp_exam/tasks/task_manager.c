@@ -1,11 +1,9 @@
 #include "task_manager.h"
 #include "../utils/stacks.h"
 
-struct task_t null_task = {0, 0, 0, 0, 0, 0};
-
-struct task_t running_tasks[TASK_NUMBER];
-int scheduling_task_index;
-uint64_t next_task_id;
+static struct task_t running_tasks[TASK_NUMBER];
+static int scheduling_task_index;
+static uint64_t next_task_id;
 
 void init_scheduling() {
     scheduling_task_index = 0;
@@ -19,6 +17,7 @@ void init_task_manager() {
     // We init scheduling
     init_scheduling();
 
+    struct task_t null_task = {0, 0, 0, 0, 0, 0};
     for (int index = 0; index < TASK_NUMBER; index++) {
         running_tasks[index] = null_task;
     }
@@ -46,7 +45,7 @@ int create_task() {
     running_tasks[task_index].first_page_address = 0x400000;
     running_tasks[task_index].second_page_address = 0;
     running_tasks[task_index].has_second_page = 0;
-    running_tasks[task_index].quanta = DEFAULT_QUANTA;
+    running_tasks[task_index].quantum = DEFAULT_QUANTA;
     running_tasks[task_index].is_alive = 1;
 
     // Add 1 to task count
