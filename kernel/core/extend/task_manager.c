@@ -1,5 +1,5 @@
-#include "task_manager.h"
-#include "../utils/stacks.h"
+#include <extend/stacks.h>
+#include <extend/task_manager.h>
 
 static struct task_t running_tasks[TASK_NUMBER];
 static int scheduling_task_index;

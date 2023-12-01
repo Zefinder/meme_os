@@ -1,5 +1,5 @@
 #include <test_utils.h>
-#include "../tp_exam/tasks/task_manager.h"
+#include <extend/task_manager.h>
 
 void test_task_manager_init() {
     init_task_manager();

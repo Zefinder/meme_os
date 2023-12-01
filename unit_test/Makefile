@@ -10,8 +10,11 @@ define compile
 $(CC) $(INCLUDE) $(CFLAGS) -o $@ -c $<
 endef
 
-sources := $(shell find ../tp_exam -name '*.c' -a -not '(' -name 'printutils.c' -o -name 'tp.c' ')')
-objects := $(patsubst %.c,%.o,$(sources))
+base_dir := ../kernel/core/extend/
+base_objects := 	stacks.o		\
+					task_manager.o
+
+objects := $(addprefix $(base_dir), $(base_objects))
 
 test: all
 	@./test_script.sh ${objects}

@@ -1,5 +1,5 @@
 #include <test_utils.h>
-#include "../tp_exam/utils/stacks.h"
+#include <extend/stacks.h>
 
 void test_init_stack() {
     init_task_stack();

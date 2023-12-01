@@ -23,7 +23,7 @@ CFLG_REL   := -DRELEASE=\"secos-$(RELEASE)\"
 CFLAGS     := $(CFLG_WRN) $(CFLG_FP) $(CFLG_KRN) $(CFLG_32) $(CFLG_REL) -fno-stack-protector
 
 # elementary kernel parts
-INCLUDE    := -I../kernel/include/ -I../kernel/include/extend
+INCLUDE    := -I../kernel/include/
 CORE       := ../kernel/core/
 CORE_EX	   := ../kernel/core/extend/
 
@@ -40,7 +40,9 @@ core_obj   :=	entry.o \
 core_obj_ex	:=	pagemem.o		\
 				print_utils.o	\
 				segmem.o		\
-				userland.o
+				userland.o		\
+				stacks.o 		\
+				task_manager.o
 
 objects    := $(addprefix $(CORE), $(core_obj))
 objects    += $(addprefix $(CORE_EX), $(core_obj_ex))

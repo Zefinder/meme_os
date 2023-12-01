@@ -1,5 +1,5 @@
-#include "stacks.h"
-#include "../tasks/task_manager.h"
+#include <extend/stacks.h>
+#include <extend/task_manager.h>
 
 // Task index stack
 int task_stack[TASK_NUMBER];
