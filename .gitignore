@@ -6,3 +6,6 @@
 /tp5/
 *.o
 *.elf
+/.vscode/
+*.o
+*.elf
