@@ -91,7 +91,7 @@ void test_ask_new_page() {
     assert_equals_int(0, create_res, "Task should be created...");
 
     // We ask a second page
-    int ask_res = ask_second_page(0);
+    int ask_res = ask_second_user_page(0);
     assert_equals_int(0, ask_res, "Page should have been given...");
 
     struct task_t* got_tasks = show_tasks();
@@ -122,11 +122,11 @@ void test_ask_new_page_yet_again() {
     assert_equals_int(0, create_res, "Task should be created...");
 
     // We ask a second page
-    int ask_res = ask_second_page(0);
+    int ask_res = ask_second_user_page(0);
     assert_equals_int(0, ask_res, "Page should have been given...");
 
     // We ask a second page again
-    ask_res = ask_second_page(0);
+    ask_res = ask_second_user_page(0);
     assert_equals_int(1, ask_res, "Page already given...");
 }
 
@@ -139,7 +139,7 @@ void test_ask_new_page_unknown_task() {
     assert_equals_int(0, create_res, "Task should be created...");
 
     // We ask a second page
-    int ask_res = ask_second_page(10);
+    int ask_res = ask_second_user_page(10);
     assert_equals_int(1, ask_res, "Task do not exist...");
 }
 
@@ -156,7 +156,7 @@ void test_ask_new_page_dead_task() {
     assert_equals_int(0, end_res, "Task should be ended...");
 
     // We ask a second page
-    int ask_res = ask_second_page(0);
+    int ask_res = ask_second_user_page(0);
     assert_equals_int(1, ask_res, "Task is already dead...");
 }
 
@@ -165,7 +165,7 @@ void test_ask_new_page_no_task() {
     init_task_manager();
 
     // We ask a second page when no task created
-    int ask_res = ask_second_page(0);
+    int ask_res = ask_second_user_page(0);
     assert_equals_int(1, ask_res, "No task created...");
 }
 
@@ -178,7 +178,7 @@ void test_ask_new_page_new_task() {
     assert_equals_int(0, create_res, "Task should be created...");
     
     // We ask a second page
-    int ask_res = ask_second_page(0);
+    int ask_res = ask_second_user_page(0);
     assert_equals_int(0, ask_res, "Page should be given...");
 
     // We end it
