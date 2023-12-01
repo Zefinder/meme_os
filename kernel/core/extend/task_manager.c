@@ -55,7 +55,7 @@ int create_task() {
 }
 
 // Asks for a second page for the specified task id, returns 1 if fails (eg. already has a second page)
-int ask_second_page(uint64_t task_id) {
+int ask_second_user_page(uint64_t task_id) {
     // Go through all running pages
     for (int task_index = 0; task_index < TASK_NUMBER; task_index++) {
         // If found we check if it already has a second page

@@ -23,7 +23,7 @@ void init_task_manager();
 int create_task();
 
 // Asks for a second page for the specified task id, returns 1 if fails (eg. already has a second page)
-int ask_second_page(uint64_t task_id);
+int ask_second_user_page(uint64_t task_id);
 
 // Ends the task specified by its task id, return 1 if task couldn't be ended (eg. task id do not exist)
 int end_task(uint64_t task_id);
