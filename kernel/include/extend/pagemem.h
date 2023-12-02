@@ -6,11 +6,37 @@
 #include <extend/memory.h>
 
 
-#define cr3_pgd_set(_cr3_,_pgd_)		\
-	{(_cr3_)->raw = (offset_t)_pgd_;}
+/**************************************/
+/**    Returns the address of the    **/
+/**        nth PGD in memory         **/
+/**************************************/
+#define nth_pgd_gbl(n)	((pde32_t*)(PGD_START + n*PGD_SIZE))
 
-#define cr0_pg_en(_cr0_)				\
-	{(_cr0_)->raw |= CR0_PG;}
+
+/**************************************/
+/**    Returns the address of the    **/
+/**        nth PTB in memory         **/
+/**************************************/
+#define nth_ptb_gbl(n)	((pte32_t*)(PTB_START + n*PTB_SIZE))
+
+
+/******************************************/
+/**    Returns the address of the        **/
+/**    nth PTB in a flat array of PTBs   **/
+/******************************************/
+#define nth_ptb(_ptbs_,n)	((pte32_t*)((offset_t)(_ptbs_) + n*PTB_SIZE))
+
+
+/*******************************************/
+/**    Set PGD addres in CR3 structure    **/
+/*******************************************/
+#define cr3_pgd_set(_cr3_,_pgd_)		{ (_cr3_)->raw = (offset_t)(_pgd_); }
+
+
+/*********************************************/
+/**    Enable paging in given CR0 struct    **/
+/*********************************************/
+#define cr0_pg_en(_cr0_)				{ (_cr0_)->raw |= CR0_PG; }
 
 
 /***********************************************/
@@ -118,27 +144,6 @@
 	ptb_usr_pte( &nth_ptb(_ptbs_, pd32_idx(_virt_))[pt32_idx(_virt_)], _phys_ )
 
 
-/**************************************/
-/**    Returns the address of the    **/
-/**        nth PGD in memory         **/
-/**************************************/
-#define nth_pgd_gbl(n)	((pde32_t*)(PGD_START + n*PGD_SIZE))
-
-
-/**************************************/
-/**    Returns the address of the    **/
-/**        nth PTB in memory         **/
-/**************************************/
-#define nth_ptb_gbl(n)	((pte32_t*)(PTB_START + n*PTB_SIZE))
-
-
-/******************************************/
-/**    Returns the address of the        **/
-/**    nth PTB in a flat array of PTBs   **/
-/******************************************/
-#define nth_ptb(_ptbs_,n)	((pte32_t*)((offset_t)(_ptbs_) + n*PTB_SIZE))
-
-
 /******************************************************/
 /**    Maps memory with identity mapping             **/
 /**                                                  **/
@@ -153,24 +158,24 @@
 /**    Example: to map Kernel space:                 **/
 /**    krn_identity_map(KERNEL_START, KERNEL_END)    **/
 /******************************************************/
-#define krn_identity_map(_pgd_,_ptbs_,_start_,_end_)							\
-	{																			\
-		for(offset_t p = _start_; p <= _end_; p += PDE_OFFSET) {				\
-			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );	\
-		}																		\
-		for(offset_t p = _start_; p <= _end_; p += PTE_OFFSET) {				\
-			ptb_set_krn_identity_pte( ((pde32_t*)(_ptbs_)), p );				\
-		}																		\
+#define krn_identity_map(_pgd_,_ptbs_,_start_,_end_)											\
+	{																							\
+		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
+			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );					\
+		}																						\
+		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PTE_OFFSET) {		\
+			ptb_set_krn_identity_pte( ((pde32_t*)(_ptbs_)), p );								\
+		}																						\
 	}
 
-#define usr_identity_map(_pgd_,_ptbs_,_start_,_end_)							\
-	{																			\
-		for(offset_t p = _start_; p <= _end_; p += PDE_OFFSET) {				\
-			pgd_set_usr_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );	\
-		}																		\
-		for(offset_t p = _start_; p <= _end_; p += PTE_OFFSET) {				\
-			ptb_set_usr_identity_pte( ((pde32_t*)(_ptbs_)), p );				\
-		}																		\
+#define usr_identity_map(_pgd_,_ptbs_,_start_,_end_)											\
+	{																							\
+		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
+			pgd_set_usr_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );					\
+		}																						\
+		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PTE_OFFSET) {		\
+			ptb_set_usr_identity_pte( ((pde32_t*)(_ptbs_)), p );								\
+		}																						\
 	}
 
 
@@ -183,14 +188,14 @@
 /**    _pstart_ : physical start address of mapping       **/
 /**    _size_   : size in bytes of the desired mapping    **/
 /***********************************************************/
-#define krn_forced_map(_pgd_,_ptbs_,_lstart_,_pstart_,_size_)											\
-	{																									\
-		for(offset_t offset = 0; offset <= _size_ - 1; offset += PDE_OFFSET) {							\
-			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), (_lstart_ + offset) );			\
-		}																								\
-		for(offset_t offset = 0; offset <= _size_ - 1; offset += PTE_OFFSET) {							\
-			ptb_set_krn_forced_pte( ((pde32_t*)(_ptbs_)), (_lstart_ + offset), (_pstart_ + offset) );		\
-		}																								\
+#define krn_forced_map(_pgd_,_ptbs_,_lstart_,_pstart_,_size_)																	\
+	{																															\
+		for(offset_t offset = 0; offset <= _size_ - 1; offset += PDE_OFFSET) {													\
+			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), ((offset_t)_lstart_ + offset) );						\
+		}																														\
+		for(offset_t offset = 0; offset <= _size_ - 1; offset += PTE_OFFSET) {													\
+			ptb_set_krn_forced_pte( ((pde32_t*)(_ptbs_)), ((offset_t)_lstart_ + offset), ((offset_t)_pstart_ + offset) );		\
+		}																														\
 	}
 
 

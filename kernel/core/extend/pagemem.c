@@ -32,7 +32,7 @@ void init_pgd()
 	krn_identity_map(&PGD[0], &PTB[0], (offset_t)&PTB[0], (offset_t)&PTB[0] + 2*PTB_SIZE - 1);
 
 	// Mapping memory where PGD is located so it can be accessed
-	krn_forced_map(&PGD[0], &PTB[0], 0xc0000000, (offset_t)&PGD[0], PTE_OFFSET);
+	krn_forced_map(&PGD[0], &PTB[0], 0xc0000000, &PGD[0], PTE_OFFSET);
 
 	/*************** For testing only: map for user for testing ring 3 jump ***************/
 	/*********************  TODO: Should ultimately be kernel mapped  *********************/
