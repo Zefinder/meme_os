@@ -27,26 +27,16 @@ INCLUDE    := -I../kernel/include/
 CORE       := ../kernel/core/
 CORE_EX	   := ../kernel/core/extend/
 
-core_obj   :=	entry.o \
-		start.o \
-		print.o \
-		uart.o	\
-		pic.o 	\
-		intr.o	\
-		idt.o	\
-		excp.o	\
-		stack.o \
-		string.o
+CORE_SRC	:= $(wildcard $(CORE)*.c)
+CORE_SRC	+= $(wildcard $(CORE)*.s)
+CORE_EX_SRC	:= $(wildcard $(CORE_EX)*.c)
 
-core_obj_ex	:=	pagemem.o		\
-				print_utils.o	\
-				segmem.o		\
-				userland.o		\
-				stacks.o 		\
-				task_manager.o
+core_obj	:= $(patsubst %.c, %.o, $(CORE_SRC))
+core_obj	:= $(patsubst %.s, %.o, $(core_obj))
+core_obj_ex	:= $(patsubst %.c, %.o, $(CORE_EX_SRC))
 
-objects    := $(addprefix $(CORE), $(core_obj))
-objects    += $(addprefix $(CORE_EX), $(core_obj_ex))
+objects := $(core_obj)
+objects += $(core_obj_ex)
 
 # Linking options
 LDFLG_32   := -melf_i386

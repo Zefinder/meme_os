@@ -5,6 +5,7 @@
 
 #include <extend/pagemem.h>
 #include <extend/segmem.h>
+#include <extend/intr.h>
 #include <extend/print_utils.h>
 #include <extend/userland.h>
 
@@ -40,6 +41,9 @@ void tp() {
 
    // Init the TSS (duh)
    init_tss();
+
+   // Init the IDT (duh)
+   init_idt();
 
    // Init the PGD (duh)
 	init_pgd();

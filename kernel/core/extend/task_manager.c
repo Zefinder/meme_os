@@ -6,12 +6,12 @@ static struct task_t running_tasks[TASK_NUMBER];
 static int scheduling_task_index;
 static uint64_t next_task_id;
 
-void init_scheduling() {
+void init_scheduling(void) {
     scheduling_task_index = 0;
 }
 
 // Inits the task manager
-void init_task_manager() {
+void init_task_manager(void) {
     // We init the available stack index
     init_task_stack();
 
@@ -26,7 +26,7 @@ void init_task_manager() {
 }
 
 // Creates a new task, return 1 if the task couldn't be created
-int create_task() {
+int create_task(void) {
     // Pop task index
     int task_index = pop_task_index();
 
@@ -109,6 +109,10 @@ int end_task(uint64_t task_id) {
 }
 
 // Returns tasks array 
-struct task_t* show_tasks() {
+struct task_t* show_tasks(void) {
     return running_tasks;
+}
+
+pid current_task(void) {
+    return running_tasks[scheduling_task_index].task_id;
 }

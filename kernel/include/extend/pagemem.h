@@ -10,21 +10,35 @@
 /**    Returns the address of the    **/
 /**        nth PGD in memory         **/
 /**************************************/
-#define nth_pgd_gbl(n)	((pde32_t*)(PGD_START + n*PGD_SIZE))
+#define nth_pgd_gbl(n)			((pde32_t*)(PGD_START + n*PGD_SIZE))
 
 
 /**************************************/
 /**    Returns the address of the    **/
 /**        nth PTB in memory         **/
 /**************************************/
-#define nth_ptb_gbl(n)	((pte32_t*)(PTB_START + n*PTB_SIZE))
+#define nth_ptb_gbl(n)			((pte32_t*)(PTB_START + n*PTB_SIZE))
+
+
+/******************************************/
+/**    Returns the address of the        **/
+/**    nth tasks's user PGDs             **/
+/******************************************/
+#define nth_user_pgds(n)		((pde32_t*)(PGD_START + (n*NUM_PGD_PER_TASK + NUM_PGD_KERNEL)*PGD_SIZE))
+
+
+/******************************************/
+/**    Returns the address of the        **/
+/**    nth tasks's user PTBs             **/
+/******************************************/
+#define nth_user_ptbs(n)		((pte32_t*)(PTB_START + (n*NUM_PTB_PER_TASK + NUM_PTB_KERNEL)*PTB_SIZE))
 
 
 /******************************************/
 /**    Returns the address of the        **/
 /**    nth PTB in a flat array of PTBs   **/
 /******************************************/
-#define nth_ptb(_ptbs_,n)	((pte32_t*)((offset_t)(_ptbs_) + n*PTB_SIZE))
+#define nth_ptb(_ptbs_,n)		((pte32_t*)((offset_t)(_ptbs_) + n*PTB_SIZE))
 
 
 /*******************************************/

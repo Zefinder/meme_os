@@ -3,12 +3,16 @@
 
 #include <types.h>
 
-#define TASK_NUMBER 10
-#define DEFAULT_QUANTA 5
+
+
+#define TASK_NUMBER     10
+#define DEFAULT_QUANTA  5
+
+typedef uint32_t pid;
 
 // Task struct
 struct task_t {
-    uint64_t task_id;
+    pid task_id;
     uint32_t first_page_address;
     uint32_t second_page_address;
     uint8_t has_second_page;
@@ -17,10 +21,10 @@ struct task_t {
 };
 
 // Inits the task manager
-void init_task_manager();
+void init_task_manager(void);
 
 // Creates a new task, return 1 if the task couldn't be created
-int create_task();
+int create_task(void);
 
 // Asks for a second page for the specified task id, returns 1 if fails (eg. already has a second page)
 int ask_second_user_page(uint64_t task_id);
@@ -29,6 +33,9 @@ int ask_second_user_page(uint64_t task_id);
 int end_task(uint64_t task_id);
 
 // Returns tasks array 
-struct task_t* show_tasks();
+struct task_t* show_tasks(void);
+
+// Returns tasks array 
+pid current_task(void);
 
 #endif
