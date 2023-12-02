@@ -35,7 +35,8 @@ core_obj   :=	entry.o \
 		intr.o	\
 		idt.o	\
 		excp.o	\
-		stack.o
+		stack.o \
+		string.o
 
 core_obj_ex	:=	pagemem.o		\
 				print_utils.o	\

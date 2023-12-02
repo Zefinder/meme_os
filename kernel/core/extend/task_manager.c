@@ -1,5 +1,6 @@
 #include <extend/stacks.h>
 #include <extend/task_manager.h>
+#include <string.h>
 
 static struct task_t running_tasks[TASK_NUMBER];
 static int scheduling_task_index;
@@ -17,10 +18,8 @@ void init_task_manager() {
     // We init scheduling
     init_scheduling();
 
-    struct task_t null_task = {0, 0, 0, 0, 0, 0};
-    for (int index = 0; index < TASK_NUMBER; index++) {
-        running_tasks[index] = null_task;
-    }
+    // Resetting all tasks
+    memset(running_tasks, 0, sizeof(struct task_t) * TASK_NUMBER);
 
     // Next task id is 0
     next_task_id = 0;
