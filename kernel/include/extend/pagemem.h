@@ -4,6 +4,7 @@
 #include <cr.h>
 #include <pagemem.h>
 #include <extend/memory.h>
+#include <extend/stacks.h>
 
 
 /**************************************/
@@ -114,14 +115,14 @@
 /**    PDE entries are aligned with 0x1000      **/
 /**                                             **/
 /**    _pgd_  : address of PGD                  **/
-/**    _ptbs_ : address of PGD's PTBs           **/
+/**    _ptb_  : address of PTB                  **/
 /**    _virt_ : virtual address to map          **/
 /*************************************************/
-#define pgd_set_krn_pde(_pgd_,_ptbs_,_virt_)														\
-	set_pde_krn( &(_pgd_)[pd32_idx(_virt_)], nth_ptb(_ptbs_, pd32_idx(_virt_)) )
+#define pgd_set_krn_pde(_pgd_,_ptb_,_virt_)				\
+	set_pde_krn( &(_pgd_)[pd32_idx(_virt_)], _ptb_ )
 
-#define pgd_set_usr_pde(_pgd_,_ptbs_,_virt_)														\
-	set_pde_usr( &(_pgd_)[pd32_idx(_virt_)], nth_ptb(_ptbs_, pd32_idx(_virt_)) )
+#define pgd_set_usr_pde(_pgd_,_ptb_,_virt_)				\
+	set_pde_usr( &(_pgd_)[pd32_idx(_virt_)], _ptb_ )
 
 
 /*************************************************/
@@ -129,14 +130,14 @@
 /**                                             **/
 /**    PTE entries are aligned with 0x10        **/
 /**                                             **/
-/**    _ptbs_ : address of PTBs                 **/
+/**    _ptb_  : address of PTB                  **/
 /**    _virt_ : virtual address to map          **/
 /*************************************************/
-#define ptb_set_krn_identity_pte(_ptbs_,_virt_)											\
-	ptb_krn_pte( &nth_ptb(_ptbs_, pd32_idx(_virt_))[pt32_idx(_virt_)], _virt_ )
+#define ptb_set_krn_identity_pte(_ptb_,_virt_)											\
+	ptb_krn_pte( _ptb_[pt32_idx(_virt_)], _virt_ )
 
 #define ptb_set_usr_identity_pte(_ptbs_,_virt_)											\
-	ptb_usr_pte( &nth_ptb(_ptbs_, pd32_idx(_virt_))[pt32_idx(_virt_)], _virt_ )
+	ptb_usr_pte( _ptb_[pt32_idx(_virt_)], _virt_ )
 
 
 /**************************************************/
@@ -172,23 +173,24 @@
 /**    Example: to map Kernel space:                 **/
 /**    krn_identity_map(KERNEL_START, KERNEL_END)    **/
 /******************************************************/
-#define krn_identity_map(_pgd_,_ptbs_,_start_,_end_)											\
+#define krn_identity_map(_pgd_,_start_,_end_)													\
 	{																							\
+		pde32_t* ptb = pop_ptb();																\
 		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
-			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );					\
+			pgd_set_krn_pde( ((pde32_t*)(_pgd_)), ptb, p );										\
 		}																						\
 		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PTE_OFFSET) {		\
-			ptb_set_krn_identity_pte( ((pde32_t*)(_ptbs_)), p );								\
+			ptb_set_krn_identity_pte( ptb, p );													\
 		}																						\
 	}
-
-#define usr_identity_map(_pgd_,_ptbs_,_start_,_end_)											\
+#define krn_identity_map(_pgd_,_start_,_end_)													\
 	{																							\
+		pde32_t* ptb = pop_ptb();																\
 		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
-			pgd_set_usr_pde( ((pde32_t*)(_pgd_)), ((pde32_t*)(_ptbs_)), p );					\
+			pgd_set_usr_pde( ((pde32_t*)(_pgd_)), ptb, p );										\
 		}																						\
 		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PTE_OFFSET) {		\
-			ptb_set_usr_identity_pte( ((pde32_t*)(_ptbs_)), p );								\
+			ptb_set_usr_identity_pte( ptb, p );													\
 		}																						\
 	}
 

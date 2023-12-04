@@ -9,12 +9,13 @@
 #define DEFAULT_QUANTA  5
 
 typedef uint32_t pid;
+typedef uint32_t tidx;
 
 // Task struct
 struct task_t {
     pid task_id;
-    uint32_t first_page_address;
-    uint32_t second_page_address;
+    offset_t first_page_address;
+    offset_t second_page_address;
     uint8_t has_second_page;
     uint8_t quantum;
     uint8_t is_alive;
@@ -36,6 +37,6 @@ int end_task(uint64_t task_id);
 struct task_t* show_tasks(void);
 
 // Returns tasks array 
-pid current_task(void);
+tidx current_task(void);
 
 #endif

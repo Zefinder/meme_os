@@ -113,6 +113,6 @@ struct task_t* show_tasks(void) {
     return running_tasks;
 }
 
-pid current_task(void) {
-    return running_tasks[scheduling_task_index].task_id;
+tidx current_task(void) {
+    return scheduling_task_index;
 }
