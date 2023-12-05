@@ -12,7 +12,9 @@ void userland() {
    */
    // asm volatile ("mov $1, %eax ; int $128\n\t");
    uint32_t test = 42;
-   asm volatile ("mov %0, %%eax ; mov %1, %%ebx ; int %2\n\t" :: "i" (SYS_READ_CNT),"i" () , "i" (INT_SYSCALL) : "%eax", "%ebx");
+   int read_cnt = SYS_READ_CNT;
+   int val = VALUE;
+   asm volatile ("int %2\n\t" :: "a" (read_cnt), "b" (val) , "i" (INT_SYSCALL));
 
    // Priviledged, should provoke an exception
    asm volatile ("mov %eax, %cr0\n\t");
