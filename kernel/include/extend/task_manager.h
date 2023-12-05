@@ -1,5 +1,5 @@
-#ifndef __TASK_MANAGER__
-#define __TASK_MANAGER__
+#ifndef __EXTEND_TASK_MANAGER_H__
+#define __EXTEND_TASK_MANAGER_H__
 
 #include <types.h>
 #include <extend/types.h>

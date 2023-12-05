@@ -1,5 +1,5 @@
-#ifndef INTR_H
-#define INTR_H
+#ifndef __EXTEND_INTR_H__
+#define __EXTEND_INTR_H__
 
 // Interrupts
 #define INT_SYSCALL     0x80

@@ -1,5 +1,5 @@
-#ifndef __STACKS_H__
-#define __STACKS_H__
+#ifndef __EXTEND_STACKS_H__
+#define __EXTEND_STACKS_H__
 #include <extend/task_manager.h>
 #include <pagemem.h>
 

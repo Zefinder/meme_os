@@ -1,5 +1,5 @@
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef __EXTEND_MEMORY_H__
+#define __EXTEND_MEMORY_H__
 
 #include <segmem.h>
 #include <extend/task_manager.h>

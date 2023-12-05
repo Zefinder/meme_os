@@ -53,13 +53,13 @@ void push_ptb(pte32_t* ptb) {
 // Pops the task index that is ready to use, removing it from the stack. If none returns -1
 tidx pop_task_index() {
     // If no value is pointed (after TASK_NUMBER - 1), we return -1
-    // Else we return the task index value and we increase the task_stack_index
+    // Else we return the ptb and we increase the ptb_stack_index
     return task_stack_index == TASK_NUMBER ? -1 : task_stack[task_stack_index++];
 }
 
 // Pops the ptb that is ready to use, removing it from the stack. If none returns -1
 pte32_t* pop_ptb() {
-    // If no value is pointed (after NUM_PTB - 1), we return -1
-    // Else we return the task index value and we increase the task_stack_index
+    // If no value is pointed (after NUM_PTB - 1), we return NULL
+    // Else we return the ptb and we increase the ptb_stack_index
     return ptb_stack_index == NUM_PTB ? NULL : ptb_stack[ptb_stack_index++];
 }

@@ -1,5 +1,5 @@
-#ifndef SEGMEM_H
-#define SEGMEM_H
+#ifndef __EXTEND_SEGMEM_H__
+#define __EXTEND_SEGMEM_H__
 
 #include <segmem.h>
 
