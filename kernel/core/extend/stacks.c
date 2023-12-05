@@ -1,7 +1,7 @@
+#include <extend/types.h>
 #include <extend/stacks.h>
 #include <extend/memory.h>
 #include <extend/pagemem.h>
-#include <extend/task_manager.h>
 
 // Task index stack
 tidx task_stack[TASK_NUMBER];
@@ -46,7 +46,7 @@ void push_ptb(pte32_t* ptb) {
     // If ptb_stack_index is already at the bottom, we do nothing
     if (ptb_stack_index != 0) {
         // We decrement and put the value at the new index
-        task_stack[--ptb_stack_index] = ptb;
+        ptb_stack[--ptb_stack_index] = ptb;
     }
 }
 
@@ -61,5 +61,5 @@ tidx pop_task_index() {
 pte32_t* pop_ptb() {
     // If no value is pointed (after NUM_PTB - 1), we return -1
     // Else we return the task index value and we increase the task_stack_index
-    return ptb_stack_index == NUM_PTB ? -1 : ptb_stack[ptb_stack_index++];
+    return ptb_stack_index == NUM_PTB ? NULL : ptb_stack[ptb_stack_index++];
 }

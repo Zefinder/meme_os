@@ -1,6 +1,7 @@
 #ifndef __STACKS_H__
 #define __STACKS_H__
 #include <extend/task_manager.h>
+#include <pagemem.h>
 
 // Inits the task stack
 void init_task_stack();

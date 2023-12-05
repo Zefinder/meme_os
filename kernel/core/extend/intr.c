@@ -24,20 +24,27 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             ebx is in task's address space -> need to translate to kernel address space
         */
         case SYS_READ_CNT:
+            debug("SYS_READ_CNT\n");
             offset_t virt = ctx->gpr.ebx.raw;
+            debug("virt ->%p\n", (void*)virt);
 
             uint32_t tidx = current_task();
 
             pde32_t* task_PGD = nth_user_pgds(tidx);
-            pte32_t* task_PTB = (task_PGD[pd32_idx(virt)].addr) << 12;
+            debug("task_PGD ->%p\n", task_PGD);
+            pte32_t* task_PTB = (pte32_t*)((task_PGD[pd32_idx(virt)].addr) << 12);
+            debug("task_PTB ->%p\n", task_PTB);
             offset_t phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 10) - 1)) );
+            debug("phys ->%p\n", (void*)phys);
 
             // Trick for compiling
             // TODO
-            cnt = cnt;
-            tidx = tidx;
-            task_PGD = task_PGD;
-            task_PTB = task_PTB;
+            uint32_t a;
+            a = (uint32_t)phys;
+            a = (uint32_t)tidx;
+            a = (uint32_t)task_PGD;
+            a = (uint32_t)task_PTB;
+            a = a;
 
             break;
         
@@ -45,6 +52,7 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             break;
 
     }
+    debug("Exiting SYSCALL\n");
 }
 
 
