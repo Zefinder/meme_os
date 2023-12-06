@@ -3,17 +3,13 @@
 #include <extend/userland.h>
 #include <extend/intr.h>
 
-void userland() {
-   debug("This is fine.\n");
+void __attribute__((section(".usr"),aligned(4))) userland()
+{
+   debug("This is fine, userland at %p\n", (void*)userland);
 
    // Syscall
-   /*
-   ** TODO: change asm automatic
-   */
-   // asm volatile ("mov $1, %eax ; int $128\n\t");
-   uint32_t test = 42;
    int read_cnt = SYS_READ_CNT;
-   int val = VALUE;
+   int val = 0;
    asm volatile ("int %2\n\t" :: "a" (read_cnt), "b" (val) , "i" (INT_SYSCALL));
 
    // Priviledged, should provoke an exception

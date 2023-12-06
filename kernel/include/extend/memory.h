@@ -17,6 +17,9 @@
 #define SHARED_START	0x414000    // Start address of shared User memory
 #define SHARED_END		0x4fffff    // End address of shared User memory
 
+#define USER_CODE_START 0x500000    // Start address of User memory
+#define USER_CODE_END	0X7fffff    // End address of User memory
+
 
 // Page related constants
 #define PAGE_START		0x350000    // Start address of paging related memory
