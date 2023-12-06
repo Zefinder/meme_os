@@ -26,6 +26,7 @@ void link_ptb(int task_index) {
 
 // Will map a page for the current task and return the address, or return -1 if not possible
 offset_t map_user_page(int task_index) {
+    // If no pages yet, it means that we need to link the PTB to the PGD for the good index
     if (task_pages[task_index].number_user_pages == 0) {
         link_ptb(task_index);
     }

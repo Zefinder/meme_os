@@ -131,13 +131,14 @@ void test_init_page_stack() {
     init_page_stack();
 
     // Expected result
-    offset_t expected_page_stack[20];
+    // uint32_t to stop compilation warnings
+    uint32_t expected_page_stack[20];
     for (int index = 0; index < 20; index++) {
         expected_page_stack[index] = 0x400000 + index * 0x1000;
     }
 
     // We pop all values
-    offset_t got_page_stack[20];
+    uint32_t got_page_stack[20];
     for (int index = 0; index < 20; index++) {
         got_page_stack[index] = pop_page_address();
     }
@@ -151,7 +152,7 @@ void test_push_page_stack() {
     init_page_stack();
 
     // Expected result
-    offset_t expected_page_stack[19];
+    uint32_t expected_page_stack[19];
     for (int index = 0; index < 19; index++) {
         expected_page_stack[index] = 0x401000 + index * 0x1000;
     }
@@ -165,7 +166,7 @@ void test_push_page_stack() {
     push_page_address(0x400000);
 
     // We pop all values
-    offset_t got_page_stack[19];
+    uint32_t got_page_stack[19];
     for (int index = 0; index < 19; index++) {
         got_page_stack[index] = pop_page_address();
     }
@@ -179,7 +180,7 @@ void test_full_push_page_stack() {
     init_page_stack();
 
     // Expected result
-    offset_t expected_page_stack[20];
+    uint32_t expected_page_stack[20];
     for (int index = 0; index < 20; index++) {
         expected_page_stack[index] = 0x400000 + (19 - index) * 0x1000;
     }
@@ -195,7 +196,7 @@ void test_full_push_page_stack() {
     }
 
     // We repop all values
-    offset_t got_page_stack[20];
+    uint32_t got_page_stack[20];
     for (int index = 0; index < 20; index++) {
         got_page_stack[index] = pop_page_address();
     }
