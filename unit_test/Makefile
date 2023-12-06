@@ -12,7 +12,8 @@ endef
 
 base_dir := ../kernel/core/extend/
 base_objects := 	stacks.o		\
-					task_manager.o
+					task_manager.o	\
+					page_manager.o
 
 objects := $(addprefix $(base_dir), $(base_objects))
 

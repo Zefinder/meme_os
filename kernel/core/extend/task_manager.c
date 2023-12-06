@@ -1,5 +1,6 @@
 #include <extend/stacks.h>
 #include <extend/task_manager.h>
+#include <extend/page_manager.h>
 #include <string.h>
 
 static struct task_t running_tasks[TASK_NUMBER];
@@ -14,6 +15,9 @@ void init_scheduling(void) {
 void init_task_manager(void) {
     // We init the available stack index
     init_task_stack();
+
+    // We init the page manager
+    init_page_manager();
 
     // We init scheduling
     init_scheduling();
@@ -35,13 +39,17 @@ int create_task(void) {
         return 1;
     }
 
-    // TODO Else we ask for a user page
+    // Else we ask for a user page
+    offset_t first_page_index = map_user_page(task_index);
+    
     // If address is -1 then repush the task index and we return 1
-    // TODO Add in good index PTB
-
+    if (first_page_index == (offset_t) -1) {
+        return 1;
+    }
+    
     // We create a task struct with the address within the good index
     running_tasks[task_index].task_id = next_task_id;
-    running_tasks[task_index].first_page_address = 0x400000;
+    running_tasks[task_index].first_page_address = first_page_index;
     running_tasks[task_index].second_page_address = 0;
     running_tasks[task_index].has_second_page = 0;
     running_tasks[task_index].quantum = DEFAULT_QUANTA;
@@ -64,12 +72,14 @@ int ask_second_user_page(tidx task_id) {
                 return 1;
             }
 
-            // TODO Else asks for a user page
+            // Else asks for a user page
+            offset_t second_page_address = map_user_page(task_index);
+
             // TODO If address is -1 then return 1
             // TODO Add in PTB
 
             // Add page and address to task
-            running_tasks[task_index].second_page_address = 0x401000;
+            running_tasks[task_index].second_page_address = second_page_address;
             running_tasks[task_index].has_second_page = 1;
             
             return 0;
@@ -88,13 +98,8 @@ int end_task(tidx task_id) {
             // If found and alive, we put is_alive to 0
             running_tasks[task_index].is_alive = 0;
 
-            // TODO We free the first page
-            // TODO If it has a second page we also free it
-            if (running_tasks[task_index].has_second_page) {
-
-            }
-
-            // TODO Invalidate PTB entries
+            // We free user pages
+            free_task_pages(running_tasks[task_index], task_index);
 
             // We push back the task index
             push_task_index(task_index);

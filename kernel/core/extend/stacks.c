@@ -13,7 +13,7 @@ pte32_t* ptb_stack[NUM_PTB];
 int ptb_stack_index;
 
 // Page addresses stack
-uint32_t page_stack[PAGE_NUMBER];
+offset_t page_stack[PAGE_NUMBER];
 int page_stack_index;
 
 void init_task_stack() {
@@ -40,7 +40,7 @@ void init_ptb_stack()
 // Inits the page stack
 void init_page_stack() {
     // We fill from begin to end of user addresses
-    for (int index = 0; index < PAGE_NUMBER; index++) {
+    for (int index = 0; (unsigned long) index < PAGE_NUMBER; index++) {
         page_stack[index] = USER_START + index * PAGE_SIZE;
     }
 
@@ -93,5 +93,5 @@ pte32_t* pop_ptb() {
 offset_t pop_page_address() {
     // If no value is pointed (after PAGE_NUMBER - 1), we return -1
     // Else we return the page address value and we increase the page_stack_index
-    return page_stack_index == PAGE_NUMBER ? -1 : page_stack[page_stack_index++];
+    return page_stack_index == PAGE_NUMBER ? (offset_t) -1 : page_stack[page_stack_index++];
 }

@@ -4,8 +4,6 @@
 #include <segmem.h>
 #include <extend/task_manager.h>
 
-#define PAGE_SIZE   0x1000    // Size of a page
-
 // Hard memory mapping
 #define KERNEL_START	0x300000    // Start address of Kernel memory
 #define KERNEL_END		0x33ffff    // End address of Kernel memory

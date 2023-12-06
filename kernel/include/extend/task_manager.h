@@ -3,6 +3,7 @@
 
 #include <types.h>
 #include <extend/types.h>
+#include <pagemem.h>
 #include <extend/memory.h>
 
 #define TASK_NUMBER 10
