@@ -2,7 +2,7 @@
 
 CC         := gcc
 INCLUDE    := -I../kernel/include
-CFLAGS	   := -pipe -nostdlib -nostdinc -ffreestanding -fms-extensions
+CFLAGS	   := -pipe -nostdlib -nostdinc -ffreestanding -fms-extensions -Wno-int-to-pointer-cast
 
 .PHONY: test
 

@@ -67,11 +67,11 @@ void test_init_ptb_stack() {
 
     uint32_t got_ptb_stack[NUM_PTB];
     for (int index = 0; index < NUM_PTB; index++) {
-        got_ptb_stack[index] = (uint32_t)pop_ptb();
+        got_ptb_stack[index] = (uint32_t) pop_ptb();
     }
 
     assert_equals_arr_uint32(expected_ptb_stack, got_ptb_stack, NUM_PTB, "Initialisation for ptb index stack wrong...");
-    assert_equals_uint32(NULL, (uint32_t)pop_ptb(), "Should not be more than NUM_PTB ptbs...");
+    assert_equals_uint32(0, (uint32_t) pop_ptb(), "Should not be more than NUM_PTB ptbs...");
 }
 
 void test_push_ptb_stack() {
@@ -93,7 +93,7 @@ void test_push_ptb_stack() {
 
     uint32_t got_ptb_stack[NUM_PTB - 1];
     for (int index = 0; index < NUM_PTB - 1; index++) {
-        got_ptb_stack[index] = (uint32_t)pop_ptb();
+        got_ptb_stack[index] = (uint32_t) pop_ptb();
     }
 
     assert_equals_arr_int(expected_ptb_stack, got_ptb_stack, NUM_PTB - 1, "Push went wrong at some point...");
@@ -120,7 +120,7 @@ void test_full_push_ptb_stack() {
 
     uint32_t got_ptb_stack[NUM_PTB];
     for (int index = 0; index < NUM_PTB; index++) {
-        got_ptb_stack[index] = (uint32_t)pop_ptb();
+        got_ptb_stack[index] = (uint32_t) pop_ptb();
     }
 
     assert_equals_arr_int(expected_ptb_stack, got_ptb_stack, 10, "All should be upside down...");
