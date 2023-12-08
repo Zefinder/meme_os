@@ -6,12 +6,12 @@ static struct task_t running_tasks[TASK_NUMBER];
 static int scheduling_task_index;
 static uint64_t next_task_id;
 
-void init_scheduling() {
+void init_scheduling(void) {
     scheduling_task_index = 0;
 }
 
 // Inits the task manager
-void init_task_manager() {
+void init_task_manager(void) {
     // We init the available stack index
     init_task_stack();
 
@@ -26,7 +26,7 @@ void init_task_manager() {
 }
 
 // Creates a new task, return 1 if the task couldn't be created
-int create_task() {
+int create_task(void) {
     // Pop task index
     int task_index = pop_task_index();
 
@@ -54,7 +54,7 @@ int create_task() {
 }
 
 // Asks for a second page for the specified task id, returns 1 if fails (eg. already has a second page)
-int ask_second_user_page(uint64_t task_id) {
+int ask_second_user_page(tidx task_id) {
     // Go through all running pages
     for (int task_index = 0; task_index < TASK_NUMBER; task_index++) {
         // If found we check if it already has a second page
@@ -81,7 +81,7 @@ int ask_second_user_page(uint64_t task_id) {
 }
 
 // Ends the task specified by its task id, return 1 if task couldn't be ended (eg. task id do not exist)
-int end_task(uint64_t task_id) {
+int end_task(tidx task_id) {
     // Go through all running tasks
     for (int task_index = 0; task_index < TASK_NUMBER; task_index++) {
         if (running_tasks[task_index].task_id == task_id && running_tasks[task_index].is_alive) {
@@ -109,6 +109,10 @@ int end_task(uint64_t task_id) {
 }
 
 // Returns tasks array 
-struct task_t* show_tasks() {
+struct task_t* show_tasks(void) {
     return running_tasks;
+}
+
+tidx current_task(void) {
+    return scheduling_task_index;
 }

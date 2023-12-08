@@ -1,5 +1,5 @@
-#ifndef PRINT_UTILS_H
-#define PRINT_UTILS_H
+#ifndef __EXTEND_PRINT_UTILS_H__
+#define __EXTEND_PRINT_UTILS_H__
 #include <segmem.h>
 
 void print_gdt_content(gdt_reg_t gdtr_ptr);

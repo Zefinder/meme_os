@@ -1,6 +1,6 @@
-#ifndef USERLAND_H
-#define USERLAND_H
+#ifndef __EXTEND_USERLAND_H__
+#define __EXTEND_USERLAND_H__
 
-void userland(void);
+void __attribute__((section(".usr"),aligned(4))) userland(void);
 
 #endif
