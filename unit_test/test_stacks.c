@@ -144,7 +144,7 @@ void test_init_page_stack() {
     }
 
     assert_equals_arr_uint32(expected_page_stack, got_page_stack, 20, "Initialisation for page address stack wrong...");
-    assert_equals_int(-1, pop_page_address(), "Should not be more than 20 pages...");
+    assert_equals_int(0, pop_page_address(), "Should not be more than 20 pages...");
 }
 
 void test_push_page_stack() {
@@ -172,7 +172,7 @@ void test_push_page_stack() {
     }
 
     assert_equals_arr_uint32(expected_page_stack, got_page_stack, 19, "Repushed 0x400000 but not 0x401000...");
-    assert_equals_int(-1, pop_page_address(), "Should not be more than 19 pages...");
+    assert_equals_int(0, pop_page_address(), "Should not be more than 19 pages...");
 }
 
 void test_full_push_page_stack() {
@@ -202,7 +202,7 @@ void test_full_push_page_stack() {
     }
 
     assert_equals_arr_uint32(expected_page_stack, got_page_stack, 20, "All addresses must be upside down...");
-    assert_equals_int(-1, pop_page_address(), "Should not be more than 20 pages...");
+    assert_equals_int(0, pop_page_address(), "Should not be more than 20 pages...");
 }
 
 int main() {

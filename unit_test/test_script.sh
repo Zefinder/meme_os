@@ -10,7 +10,7 @@ test_file="test"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
 CC="gcc"
-OPTIONS="-fms-extensions -rdynamic -finstrument-functions -Wno-builtin-declaration-mismatch -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast"
+OPTIONS="-fms-extensions -rdynamic -finstrument-functions -Wno-builtin-declaration-mismatch"
 INCLUDES="-I../kernel/include -I."
 objects=$@
 

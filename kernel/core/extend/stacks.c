@@ -93,5 +93,5 @@ pte32_t* pop_ptb() {
 offset_t pop_page_address() {
     // If no value is pointed (after PAGE_NUMBER - 1), we return -1
     // Else we return the page address value and we increase the page_stack_index
-    return page_stack_index == PAGE_NUMBER ? (offset_t) -1 : page_stack[page_stack_index++];
+    return page_stack_index == PAGE_NUMBER ? 0ul : page_stack[page_stack_index++];
 }

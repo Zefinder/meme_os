@@ -11,7 +11,7 @@ void init_page_manager() {
     init_page_stack();
 
     // Put task_pages to 0
-    memset(task_pages, 0, sizeof(struct task_pages_t) * TASK_NUMBER);
+    memset(task_pages, 0, sizeof(task_pages));
 }
 
 // Asks the creation of a PTB for the task, return -1 if couldn't be created. 
@@ -34,10 +34,10 @@ offset_t map_user_page(int task_index) {
     // Pop address from stack
     offset_t address = pop_page_address();
     
-    // If address is -1 then return -1
-    if (address == (offset_t) -1) {
+    // If address is NULL then return NULL
+    if (address == 0ul) {
         // TODO Unlink PTB
-        return -1;
+        return 0ul;
     }
 
     // TODO Put in user PTB (USER_PAGE_ADDR(task_pages[task_index]) as virtual address)
