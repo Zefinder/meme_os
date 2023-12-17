@@ -3,10 +3,12 @@
 
 #include <types.h>
 #include <extend/types.h>
+#include <pagemem.h>
+#include <extend/memory.h>
 
-
-#define TASK_NUMBER     10
-#define DEFAULT_QUANTA  5
+#define TASK_NUMBER 10
+#define PAGE_NUMBER (USER_END - USER_START + 1) / PAGE_SIZE
+#define DEFAULT_QUANTA 5
 
 // Task struct
 struct task_t {

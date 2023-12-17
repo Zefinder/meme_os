@@ -59,7 +59,7 @@ void test_task_creation2() {
     for (int index = 0; index < 10; index++) {
         struct task_t task = got_tasks[index];
         assert_equals_uint64(index, task.task_id, "Task id should be the task number since they are created one after the other...");
-        assert_equals_uint32(0x400000, task.first_page_address, "Should be first user address (0x400000)...");
+        assert_equals_uint32(0x400000 + 0x1000 * index, task.first_page_address, "Should be 0x400000 + (0x1000 * task number)...");
         assert_equals_uint32(0, task.second_page_address, "Null since no second page...");
         assert_equals_uint8(0, task.has_second_page, "No second page by default...");
         assert_equals_uint8(5, task.quantum, "Should be default quantum number (5)...");
@@ -103,6 +103,44 @@ void test_ask_new_page() {
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     for (int index = 1; index < 10; index++) {
+        struct task_t task = got_tasks[index];
+        assert_equals_uint64(0, task.task_id, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint32(0, task.second_page_address, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.has_second_page, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.quantum, "Field should be 0 since there is no task...");
+        assert_equals_uint8(0, task.is_alive, "Field should be 0 since there is no task...");
+    }
+}
+
+void test_ask_new_page2() {
+    // We init task manager
+    init_task_manager();
+
+    // We create a task
+    int create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    // We create a second task that will ask for a second page
+    create_res = create_task();
+    assert_equals_int(0, create_res, "Task should be created...");
+
+    int ask_res = ask_second_user_page(1);
+    assert_equals_int(0, ask_res, "Page should have been given...");
+
+    // We ask a second page
+    ask_res = ask_second_user_page(0);
+    assert_equals_int(0, ask_res, "Page should have been given...");
+
+    struct task_t* got_tasks = show_tasks();
+    assert_equals_uint64(0, got_tasks[0].task_id, "Task id should be 0 since this is the first id...");
+    assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x403000, got_tasks[0].second_page_address, "Should be 4th address given (0x403000)...");
+    assert_equals_uint8(1, got_tasks[0].has_second_page, "Second page asked...");
+    assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
+    assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
+
+    for (int index = 2; index < 10; index++) {
         struct task_t task = got_tasks[index];
         assert_equals_uint64(0, task.task_id, "Field should be 0 since there is no task...");
         assert_equals_uint32(0, task.first_page_address, "Field should be 0 since there is no task...");
@@ -191,7 +229,7 @@ void test_ask_new_page_new_task() {
 
     struct task_t* got_tasks = show_tasks();
     assert_equals_uint64(1, got_tasks[0].task_id, "Second task created...");
-    assert_equals_uint32(0x400000, got_tasks[0].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x401000, got_tasks[0].first_page_address, "Second page pushed first (0x401000)...");
     assert_equals_uint32(0, got_tasks[0].second_page_address, "New task so no second page...");
     assert_equals_uint8(0, got_tasks[0].has_second_page, "No second page asked yet...");
     assert_equals_uint8(5, got_tasks[0].quantum, "Should be default quantum number (5)...");
@@ -273,7 +311,7 @@ void test_task_end2() {
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
-    assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x401000, got_tasks[1].first_page_address, "Should be second user address (0x401000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
     assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
@@ -318,7 +356,7 @@ void test_task_end3() {
     assert_equals_uint8(0, got_tasks[0].is_alive, "Task should be dead...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
-    assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x401000, got_tasks[1].first_page_address, "Should be second user address (0x401000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
     assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
@@ -364,7 +402,7 @@ void test_task_end_recreate() {
     assert_equals_uint8(1, got_tasks[0].is_alive, "Task should be alive...");
 
     assert_equals_uint64(1, got_tasks[1].task_id, "Task id should be 1 since this is the second task...");
-    assert_equals_uint32(0x400000, got_tasks[1].first_page_address, "Should be first user address (0x400000)...");
+    assert_equals_uint32(0x401000, got_tasks[1].first_page_address, "Should be second user address (0x401000)...");
     assert_equals_uint32(0, got_tasks[1].second_page_address, "Null since no second page...");
     assert_equals_uint8(0, got_tasks[1].has_second_page, "No second page by default...");
     assert_equals_uint8(5, got_tasks[1].quantum, "Should be default quantum number (5)...");
@@ -422,6 +460,7 @@ int main() {
     test_task_creation2();
     test_more_10_tasks();
     test_ask_new_page();
+    test_ask_new_page2();
     test_ask_new_page_yet_again();
     test_ask_new_page_unknown_task();
     test_ask_new_page_dead_task();

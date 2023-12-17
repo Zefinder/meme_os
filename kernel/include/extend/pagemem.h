@@ -6,7 +6,6 @@
 #include <extend/memory.h>
 #include <extend/stacks.h>
 
-
 // #define min(a,b)				((a) <= (b) ? (a) : (b))
 
 /**************************************/
