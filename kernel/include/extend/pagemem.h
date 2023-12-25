@@ -150,12 +150,12 @@
 		pde32_t *pde;																											\
 		pte32_t *ptb, *pte;																										\
 		for(offset_t offset = 0; offset < _size_; offset += PDE_OFFSET) {														\
-			pde = &(_pgd_)[pd32_idx(( offset + (offset_t)(_lstart_) ))];																		\
+			pde = &(_pgd_)[pd32_idx(( offset + (offset_t)(_lstart_) ))];														\
 			ptb = pde->p ? (pte32_t*)(pde->addr << 12) : pop_ptb();																\
 			set_krn_pde( pde, ptb );																							\
 																																\
 			for(offset_t t_offset = offset; t_offset < min(offset + PDE_OFFSET, _size_); t_offset += PTE_OFFSET) {				\
-				pte = &ptb[pt32_idx(( offset + (offset_t)(_lstart_) ))];															\
+				pte = &ptb[pt32_idx(( offset + (offset_t)(_lstart_) ))];														\
 				set_krn_pte( pte, (t_offset  + (offset_t)(_pstart_)) );															\
 			}																													\
 		}																														\
@@ -163,5 +163,15 @@
 
 
 void init_pgd(void);
+
+void init_task_pagemem(pid task);
+
+// Flushes paging entries in usr_ptb and mirrors actions in krn_ptb
+void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
+
+// Flushes paging entries in usr_pgd and mirrors actions in krn_pgd
+void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd);
+
+void clear_task_pagemem(pid task);
 
 #endif

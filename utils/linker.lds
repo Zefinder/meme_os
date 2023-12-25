@@ -20,7 +20,7 @@ SECTIONS
    __kernel_start__ = .;
 
    .idt_jmp  : { KEEP(*(.idt_jmp))               } : phsetup
-   .text     : { *(.text)                        } : phsetup
+   .text     : { *(EXCLUDE_FILE(task1* task2*) .text)    } : phsetup
    .rodata   : { *(.rodata)                      } : phsetup
    .data     : { *(.data)                        } : phsetup
    .bss      : { *(.bss COMMON)                  } : phsetup
@@ -30,5 +30,16 @@ SECTIONS
 
    . = 0x500000;
 
-   .usr      : { *(.usr)                         } : phsetup
+   __user_code_start__ = .;
+
+   .task1 : { task1*(.text)                 } : phsetup
+   . = 0x501000;
+   /*. = ALIGN(4096); to use when we have input files named task1*/
+   .task2 : { task2*(.text)                 } : phsetup
+   . = 0x502000;
+   /*. = ALIGN(4096); to use when we have input files named task2*/
+
+   __user_code_end__ = .;
+
+   /*.usr      : { *(.usr)                         } : phsetup*/
 }

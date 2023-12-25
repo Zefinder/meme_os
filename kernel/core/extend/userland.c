@@ -3,7 +3,7 @@
 #include <extend/userland.h>
 #include <extend/intr.h>
 
-void __attribute__((section(".usr"),aligned(4))) userland()
+void __attribute__((section(".task2"),aligned(4))) userland()
 {
    debug("This is fine, userland at %p\n", (void*)userland);
 

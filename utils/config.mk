@@ -22,21 +22,28 @@ CFLG_KRN   := -pipe -nostdlib -nostdinc -ffreestanding -fms-extensions
 CFLG_REL   := -DRELEASE=\"secos-$(RELEASE)\"
 CFLAGS     := $(CFLG_WRN) $(CFLG_FP) $(CFLG_KRN) $(CFLG_32) $(CFLG_REL) -fno-stack-protector
 
+INCLUDE    := -I../kernel/include/ -I../tp_exam/tasks/include/
+
 # elementary kernel parts
-INCLUDE    := -I../kernel/include/
 CORE       := ../kernel/core/
+# extended kernel parts
 CORE_EX	   := ../kernel/core/extend/
+# task parts
+TASK       := ./tasks/src/
 
 CORE_SRC	:= $(wildcard $(CORE)*.c)
 CORE_SRC	+= $(wildcard $(CORE)*.s)
 CORE_EX_SRC	:= $(wildcard $(CORE_EX)*.c)
+TASK_SRC    := $(wildcard $(TASK)*.c)
 
 core_obj	:= $(patsubst %.c, %.o, $(CORE_SRC))
 core_obj	:= $(patsubst %.s, %.o, $(core_obj))
 core_obj_ex	:= $(patsubst %.c, %.o, $(CORE_EX_SRC))
+task_obj    := $(patsubst %.c, %.o, $(TASK_SRC))
 
 objects := $(core_obj)
 objects += $(core_obj_ex)
+objects += $(task_obj)
 
 # Linking options
 LDFLG_32   := -melf_i386
