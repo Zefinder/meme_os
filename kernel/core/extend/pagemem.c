@@ -96,6 +96,9 @@ void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb)
 			__clear_page(&krn_ptb[i]);
 		}
 	}
+
+	push_ptb(&usr_ptb[0]);  // put the ptbs back into the available ptbs
+	push_ptb(&krn_ptb[0]);  // put the ptbs back into the available ptbs
 }
 
 void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd)
@@ -105,8 +108,6 @@ void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd)
 			flush_ptb((pte32_t*)(usr_pgd[i].addr << 12), (pte32_t*)(krn_pgd[i].addr << 12));
 			__clear_page(&usr_pgd[i]);
 			__clear_page(&krn_pgd[i]);
-
-            push_ptb(&usr_pgd[i]);  // put the ptb back into the available ptbs
 		}
 	}
 }
