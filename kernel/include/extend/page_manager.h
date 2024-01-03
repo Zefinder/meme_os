@@ -21,4 +21,14 @@ offset_t map_user_page(int task_index);
 // Frees all pages for task, returns 1 if an error occured
 int free_task_pages(struct task_t task, int task_index);
 
+void init_task_pagemem(pid task);
+
+// Flushes paging entries in usr_ptb and mirrors actions in krn_ptb
+void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
+
+// Flushes paging entries in usr_pgd and mirrors actions in krn_pgd
+void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd);
+
+void clear_task_pagemem(pid task);
+
 #endif

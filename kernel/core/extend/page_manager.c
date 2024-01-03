@@ -69,3 +69,60 @@ int free_task_pages(struct task_t task, int task_index) {
 
     return 0;
 }
+
+void init_task_pgd(pid task)
+{
+	pde32_t* krn_PGD = nth_pgd_gbl(0);
+	pde32_t* usr_PGD = nth_user_pgds(task);
+
+	switch (task) {
+		case 1:
+			usr_identity_map(&usr_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for task1
+			krn_identity_map(&krn_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for Kernel
+
+            usr_forced_map(&usr_PGD[0], 0x2000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+			break;
+		case 2:
+			usr_identity_map(&usr_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for task2
+			krn_identity_map(&krn_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for Kernel
+
+            usr_forced_map(&usr_PGD[0], 0x4000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+			break;
+		default:
+			break;
+	}
+
+    krn_identity_map(&krn_PGD[0], SHARED_START, SHARED_END + PTE_OFFSET - 1); // map shared usr page for Kernel
+}
+
+void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb)
+{
+	for(int i = 0; i < 1024; i++) {
+		if(usr_ptb[i].p) {
+			//__clear_page(usr_ptb[i].addr << 12);
+			__clear_page(&usr_ptb[i]);
+			__clear_page(&krn_ptb[i]);
+		}
+	}
+}
+
+void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd)
+{
+	for(int i = 0; i < 1024; i++) {
+		if(usr_pgd[i].p) {
+			flush_ptb((pte32_t*)(usr_pgd[i].addr << 12), (pte32_t*)(krn_pgd[i].addr << 12));
+			__clear_page(&usr_pgd[i]);
+			__clear_page(&krn_pgd[i]);
+
+            push_ptb(&usr_pgd[i]);  // put the ptb back into the available ptbs
+		}
+	}
+}
+
+void clear_task_pagemem(pid task)
+{
+	pde32_t *krn_PGD = nth_pgd_gbl(0);
+	pde32_t *usr_PGD = nth_user_pgds(task);
+
+	flush_pgd(krn_PGD, usr_PGD);
+}
