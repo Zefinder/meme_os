@@ -26,7 +26,7 @@ offset_t map_user_page(int task_index) {
     }
 
     // Add address to task PTB
-    add_page_task_ptb(task_index, USER_PAGE_ADDRESS(task_pages[task_index].number_user_pages), address);
+    task_page_forced_map(task_index, USER_PAGE_ADDRESS(task_pages[task_index].number_user_pages), address);
 
     // Add 1 to allocated pages
     task_pages[task_index].number_user_pages++;

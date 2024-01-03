@@ -184,7 +184,7 @@ void init_pgd(void);
 void init_task_pagemem(tidx task);
 
 // Fills task PTB with the virtual and physical addresses
-void add_page_task_ptb(tidx task, offset_t virtual_address, offset_t physical_address);
+void task_page_forced_map(tidx task, offset_t virtual_address, offset_t physical_address);
 
 // Flushes paging entries in usr_ptb and mirrors actions in krn_ptb
 void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
