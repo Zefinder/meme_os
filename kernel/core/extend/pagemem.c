@@ -87,16 +87,16 @@ void init_task_pagemem(tidx task)
     krn_identity_map(&krn_PGD[0], SHARED_START, SHARED_END + PTE_OFFSET - 1); // map shared usr page for Kernel
 }
 
-void task_page_forced_map(tidx task, offset_t virtual_address, offset_t physical_address)
+void task_forced_map(tidx task, offset_t virtual_address, offset_t physical_address, offset_t size)
 {
 	pde32_t* krn_pgd = nth_pgd_gbl(0);
 	pde32_t* usr_pgd = nth_user_pgds(task);
 
 	// Put in user ptb
-    usr_forced_map(usr_pgd, virtual_address, physical_address, PTE_OFFSET);
+    usr_forced_map(usr_pgd, virtual_address, physical_address, size);
 
     // Put in kernel ptb
-    krn_identity_map(krn_pgd, physical_address, physical_address + PTE_OFFSET);
+    krn_identity_map(krn_pgd, physical_address, physical_address + size);
 
 }
 
