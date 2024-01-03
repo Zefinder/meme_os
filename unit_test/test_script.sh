@@ -7,6 +7,7 @@ NO_COLOR='\033[0m'
 test_utils_c="test_utils.c"
 script_file="test_script.sh"
 test_file="test"
+untestable_functions="untestable_functions.c"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
 CC="gcc"
@@ -22,7 +23,7 @@ compile_and_test () {
 
     # Compile
     echo -e ${WHITE}Compiling file $filename...${NO_COLOR}
-    ${CC} ${OPTIONS} ${INCLUDES} -o $test_file $objects $test_utils_c $filename -ldl
+    ${CC} ${OPTIONS} ${INCLUDES} -o $test_file $objects $test_utils_c $untestable_functions $filename -ldl
     
     if [ $? -ne 0 ]; then
         echo -e ${RED}\[ERROR\] Impossible to compile $filename, check gcc error for more information...${NO_COLOR}
@@ -41,7 +42,7 @@ compile_and_test () {
 }
 
 for filename in "${filenames[@]}"; do
-    if [ "$filename" != "$test_utils_c" ] && [ "$filename" != "$script_file" ]; then
+    if [ "$filename" != "$test_utils_c" ] && [ "$filename" != "$script_file" ] && [ "$filename" != "$untestable_functions" ]; then
         # One new test
         test_number=$(($test_number + 1))
 
