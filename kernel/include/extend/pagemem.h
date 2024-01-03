@@ -180,7 +180,11 @@
 
 void init_pgd(void);
 
-void init_task_pagemem(pid task);
+// Inits PGD for the given task index
+void init_task_pagemem(tidx task);
+
+// Fills task PTB with the virtual and physical addresses
+void add_page_task_ptb(tidx task, offset_t virtual_address, offset_t physical_address);
 
 // Flushes paging entries in usr_ptb and mirrors actions in krn_ptb
 void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
@@ -188,6 +192,6 @@ void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
 // Flushes paging entries in usr_pgd and mirrors actions in krn_pgd
 void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd);
 
-void clear_task_pagemem(pid task);
+void clear_task_pagemem(tidx task);
 
 #endif
