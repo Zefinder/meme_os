@@ -152,7 +152,7 @@ void schedule() {
 
         // If quantum = 0 then back to default and search for new task
         if (current_task.quantum == 0) {
-            current_task.quantum = 5;
+            current_task.quantum = DEFAULT_QUANTA;
             search_for_new_task();
         }
 
