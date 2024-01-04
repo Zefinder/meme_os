@@ -193,6 +193,7 @@ void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb);
 // Flushes paging entries in usr_pgd and mirrors actions in krn_pgd
 void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd);
 
+// Flushes task's PGD and PTBs, clears corresponding entries in kernel's PGD
 void clear_task_pagemem(tidx task);
 
 #endif

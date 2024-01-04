@@ -46,9 +46,9 @@ int create_task(void) {
     // Else we ask for a user page
     offset_t first_page_index = map_user_page(task_index);
     
-    // If address is NULL then repush the task index and we return 1
+    // If address is 0 then repush the task index and we return 1
     if (first_page_index == 0ul) {
-        // TODO Remove PGD
+        clear_task_pagemem(task_index);
         return 1;
     }
     
