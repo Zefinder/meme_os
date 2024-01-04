@@ -38,4 +38,7 @@ struct task_t* show_tasks(void);
 // Returns tasks array 
 tidx current_task(void);
 
+// To call when the IRQ0 (clock) rises
+void schedule();
+
 #endif
