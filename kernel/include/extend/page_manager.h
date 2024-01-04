@@ -15,7 +15,7 @@ struct task_pages_t {
 // Inits the page manager
 void init_page_manager();
 
-// Will map a page for the current task and return the address, or return -1 if not possible
+// Will map a page for the current task and return the address, or return 0 if not possible
 offset_t map_user_page(int task_index);
 
 // Frees all pages for task, returns 1 if an error occured

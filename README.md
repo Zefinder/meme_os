@@ -78,6 +78,7 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 |     0x382089     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
 |     0x400000     |    0x413FFF    | Mémoire utilisateur | :heavy_check_mark: | :heavy_check_mark: |
 |     0x414000     |    0x4FFFFF    | Mémoire partagée    | :heavy_check_mark: | :heavy_check_mark: |
+|     0x500000     |    0x7FFFFF    | Code utilisateur    | :heavy_check_mark: | :heavy_check_mark: |
 
 - La **mémoire kernel** est la mémoire utilisée par le kernel pour stocker ses fonctions et autres variables fixes
 - La **pile kernel** est l'espace utilisé pour la pile du pépin, rien de plus...

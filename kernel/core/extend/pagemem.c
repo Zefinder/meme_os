@@ -2,6 +2,8 @@
 #include <extend/memory.h>
 #include <extend/userland.h>
 #include <extend/stacks.h>
+#include <task1.h>
+#include <task2.h>
 #include <debug.h>
 
 void init_pgd()
@@ -58,4 +60,78 @@ void init_pgd()
 	cr0.raw = get_cr0();
 	cr0_pg_en(&cr0);
 	set_cr0(cr0);
+}
+
+void init_task_pagemem(tidx task)
+{
+	pde32_t* krn_PGD = nth_pgd_gbl(0);
+	pde32_t* usr_PGD = nth_user_pgds(task);
+
+	switch (task) {
+		case 0:
+			usr_identity_map(&usr_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for task1
+			krn_identity_map(&krn_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for Kernel
+
+            usr_forced_map(&usr_PGD[0], 0x2000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+			break;
+		case 1:
+			usr_identity_map(&usr_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for task2
+			krn_identity_map(&krn_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for Kernel
+
+            usr_forced_map(&usr_PGD[0], 0x4000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+			break;
+		default:
+			break;
+	}
+
+    krn_identity_map(&krn_PGD[0], SHARED_START, SHARED_END + PTE_OFFSET - 1); // map shared usr page for Kernel
+}
+
+void task_forced_map(tidx task, offset_t virtual_address_start, offset_t physical_address, offset_t size)
+{
+	pde32_t* krn_pgd = nth_pgd_gbl(0);
+	pde32_t* usr_pgd = nth_user_pgds(task);
+
+	// Put in user ptb
+    usr_forced_map(usr_pgd, virtual_address_start, physical_address, size);
+
+    // Put in kernel ptb
+    krn_identity_map(krn_pgd, physical_address, physical_address + size - 1);
+
+}
+
+void flush_ptb(pte32_t *usr_ptb, pte32_t *krn_ptb)
+{
+	for(int i = 0; i < 1024; i++) {
+		if(usr_ptb[i].p) {
+			//__clear_page(usr_ptb[i].addr << 12);
+			__clear_page(&usr_ptb[i]);
+			__clear_page(&krn_ptb[i]);
+
+			push_ptb(&usr_ptb[i]);  // put the ptb back into the available ptbs
+			push_ptb(&krn_ptb[i]);  // put the ptb back into the available ptbs
+		}
+	}
+}
+
+void flush_pgd(pde32_t *usr_pgd, pde32_t *krn_pgd)
+{
+	for(int i = 0; i < 1024; i++) {
+		if(usr_pgd[i].p) {
+			flush_ptb((pte32_t*)(usr_pgd[i].addr << 12), (pte32_t*)(krn_pgd[i].addr << 12));
+			__clear_page(&usr_pgd[i]);
+			__clear_page(&krn_pgd[i]);
+		}
+	}
+}
+
+void clear_task_pagemem(tidx task)
+{
+    /*
+    *   TODO: this currently clears the shared page for kernel too, later this should wait for both tasks to clear
+    */
+	pde32_t *krn_PGD = nth_pgd_gbl(0);
+	pde32_t *usr_PGD = nth_user_pgds(task);
+
+	flush_pgd(krn_PGD, usr_PGD);
 }

@@ -1,6 +1,7 @@
 #include <extend/stacks.h>
 #include <extend/task_manager.h>
 #include <extend/page_manager.h>
+#include <extend/pagemem.h>
 #include <string.h>
 
 static struct task_t running_tasks[TASK_NUMBER];
@@ -32,7 +33,10 @@ void init_task_manager(void) {
 // Creates a new task, return 1 if the task couldn't be created
 int create_task(void) {
     // Pop task index
-    int task_index = pop_task_index();
+    tidx task_index = pop_task_index();
+
+    // Init PGD for task and kernel
+    init_task_pagemem(task_index);
 
     // If index is -1 then we return 1
     if (task_index == -1) {
@@ -42,8 +46,9 @@ int create_task(void) {
     // Else we ask for a user page
     offset_t first_page_index = map_user_page(task_index);
     
-    // If address is NULL then repush the task index and we return 1
+    // If address is 0 then repush the task index and we return 1
     if (first_page_index == 0ul) {
+        clear_task_pagemem(task_index);
         return 1;
     }
     
@@ -75,7 +80,10 @@ int ask_second_user_page(tidx task_id) {
             // Else asks for a user page
             offset_t second_page_address = map_user_page(task_index);
 
-            // TODO If address is -1 then return 1
+            // If address is 0 then return 1
+            if(second_page_address == 0ul) {
+                return 1;
+            }
 
             // Add page and address to task
             running_tasks[task_index].second_page_address = second_page_address;

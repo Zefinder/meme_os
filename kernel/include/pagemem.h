@@ -161,7 +161,7 @@ typedef union page_table_entry
 #define __copy_page(_d,_s)           _memcpy32(_d, _s, PAGE_SIZE)
 
 /*
-** Invalidate 32 bits TLB entry
+** Invalidate 32 bits TLB entry, only for TLB
 */
 #define invalidate(addr)             \
    asm volatile ("invlpg %0"::"m"(addr):"memory")
