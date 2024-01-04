@@ -10,10 +10,10 @@
 
 void syscall_isr() {
    asm volatile (
-      "leave\n\t" "pusha\n\t"
+      "leave ; pusha\n\t"
       "mov %esp, %eax\n\t"
       "call syscall_handler\n\t"
-      "popa\n\t" "iret\n\t"
+      "popa\n\t ; iret\n\t"
       );
 }
 
