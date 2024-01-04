@@ -120,3 +120,41 @@ struct task_t* show_tasks(void) {
 tidx current_task(void) {
     return scheduling_task_index;
 }
+
+void search_for_new_task() {
+        // Create values
+        int new_task_index = 0;
+        int found = 0;
+        while (!found && new_task_index < TASK_NUMBER) {
+            if (running_tasks[scheduling_task_index].is_alive) {
+                // We found !
+                found = 1;
+            }
+            new_task_index++;
+        }
+
+        // If something was found then update index
+        if (found) {
+            scheduling_task_index = new_task_index;
+            // TODO Switch task to this new task
+        }
+}
+
+void schedule() {
+    struct task_t current_task = running_tasks[scheduling_task_index];
+
+    // If no tasks, then on dead task, search for one alive
+    if (!current_task.is_alive) {
+        search_for_new_task();
+    } else {
+        // Quantum decrease
+        current_task.quantum--;
+
+        // If quantum = 0 then back to default and search for new task
+        if (current_task.quantum == 0) {
+            current_task.quantum = 5;
+            search_for_new_task();
+        }
+
+    }
+}
