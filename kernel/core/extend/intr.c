@@ -71,6 +71,7 @@ void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
     debug("IRQ0 ebx = %08x\n", ctx->gpr.ebx.raw);
     // if (++tick % 18 == 0)
         debug("Switching tasks!\n");
+        save_task_ctx(ctx);
 }
 
 // void set_interval()

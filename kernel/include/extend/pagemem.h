@@ -185,7 +185,7 @@
 void init_pgd(void);
 
 // Inits PGD for the given task index
-void init_task_pagemem(tidx task);
+void init_task_pagemem(tidx task_id, void *task);
 
 // Fills task PTB with the virtual and physical addresses
 void task_forced_map(tidx task, offset_t virtual_address, offset_t physical_address, offset_t size);

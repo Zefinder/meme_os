@@ -32,12 +32,12 @@ void init_task_manager(void) {
 }
 
 // Creates a new task, return 1 if the task couldn't be created
-int create_task(void) {
+int create_task(void *task) {
     // Pop task index
     tidx task_index = pop_task_index();
 
     // Init PGD for task and kernel
-    init_task_pagemem(task_index);
+    init_task_pagemem(task_index, task);
 
     // If index is -1 then we return 1
     if (task_index == -1) {
@@ -60,6 +60,14 @@ int create_task(void) {
     running_tasks[task_index].has_second_page = 0;
     running_tasks[task_index].quantum = DEFAULT_QUANTA;
     running_tasks[task_index].is_alive = 1;
+
+    // Creating first context
+    running_tasks[task_index].ctx.cs.raw        = c3_sel;
+    running_tasks[task_index].ctx.ss.raw        = d3_sel;
+    running_tasks[task_index].ctx.eip.raw       = (offset_t)task;
+    running_tasks[task_index].ctx.esp.raw       = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4; // 4 bytes for the previous ebp
+    running_tasks[task_index].ctx.gpr.ebp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
+    running_tasks[task_index].ctx.gpr.esp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
 
     // Add 1 to task count
     next_task_id++;
@@ -168,26 +176,18 @@ void schedule() {
     }
 }
 
-void __attribute__((section(".shared_usr_code"),aligned(4))) switch_task(tidx task_id)
+void __attribute__((section(".shared_usr_code"),aligned(4))) load_task_pgd(tidx task_id)
 {
+    // Here we are already ring 3 when we call this, the first ring 0 -> ring 3 is through userland
+    // However in CR3 it's the Kernel's PGD, loaded previously from boot or IRQ0 handler
     pde32_t *task_PGD = nth_user_pgds(task_id);
 
     cr3_reg_t cr3;
     cr3_pgd_set(&cr3, &task_PGD[0]);
     set_cr3(cr3);
+}
 
-    set_ds(d3_sel);
-    set_es(d3_sel);
-    set_fs(d3_sel);
-    set_gs(d3_sel);
-    // asm volatile (
-    //     "push %0\n"
-    //     "push %1\n"
-    //     "pushf\n"
-    //     "push %2\n"
-    //     "push %3\n"
-    //     "iret\n"
-    //     :
-    //     : "i" (d3_sel), "r" (running_tasks[tidx].first_page_address), "i" (c3_sel), "r" (userland) //IL FAUT CHANGER USERLAND PAR LE SAVED EIP
-    // );
+void __attribute__((section(".shared_usr_code"),aligned(4))) save_task_ctx(int_ctx_t *ctx)
+{
+    memcpy(ctx, &(running_tasks[task_index].ctx), sizeof(int_ctx_t));
 }
