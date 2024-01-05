@@ -45,7 +45,7 @@ void init_pgd()
 	usr_identity_map(&PGD[0], USER_START, USER_END); // USR
 
 	// Mapping userland
-	usr_identity_map(&PGD[0], (offset_t)userland - 0x1000, (offset_t)userland + PTE_OFFSET - 1);
+	usr_identity_map(&PGD[0], (offset_t)userland, (offset_t)userland + PTE_OFFSET);
 	// usr_identity_map(&PGD[0], 0x0, 0x068000-1);
 
 

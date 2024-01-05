@@ -17,10 +17,10 @@
 /************************************************/
 /**        Goes into ring 3 (usermode)         **/
 /**                                            **/
-/**     _fun_ : ring 3 code                    **/
-/**     _esp_ : stack pointer for new task     **/
+/**     _task_ : ring 3 task code address      **/
+/**     _esp_  : stack pointer for new task    **/
 /************************************************/
-#define go_ring_3(_esp_)                                                         \
+#define go_ring_3(_task_,_esp_)                                                  \
    {                                                                       		\
       set_ds(d3_sel);                                                            \
       set_es(d3_sel);                                                            \
@@ -34,7 +34,7 @@
          "push %3\n"                                                       		\
          "iret\n"                                                          		\
          :                                                                 		\
-         : "i" (d3_sel), "i" (_esp_), "i" (c3_sel), "r" (userland)               \
+         : "i" (d3_sel), "i" (_esp_), "i" (c3_sel), "r" (_task_)                 \
       );                                                                   		\
    }
 
@@ -82,13 +82,8 @@ void tp() {
    // (tasks+1)->task_id, (tasks+1)->first_page_address, (tasks+1)->quantum, (tasks+1)->is_alive
    // );
 
-	// cr3_reg_t cr3;
-   // pde32_t *task1_PGD = (pde32_t *)nth_user_pgds(0);
-	// cr3_pgd_set(&cr3, &task1_PGD[0]);
-	// set_cr3(cr3);
-
    debug("Userland at %p\n", (void*)userland);
 
-   go_ring_3(USER_END);
+   go_ring_3(userland, USER_END);
 
 }

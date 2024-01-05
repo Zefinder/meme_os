@@ -102,18 +102,21 @@
 /**    _end_   : last byte of the end address of     **/
 /**              desired mapping                     **/
 /**                                                  **/
+/**    /!\ _end_ is the address of the first byte    **/
+/**    AFTER the mapping                             **/
+/**                                                  **/
 /**    Prefix specifies pages' privilege level       **/
 /******************************************************/
 #define krn_identity_map(_pgd_,_start_,_end_)													\
 	{																							\
 		pde32_t *pde;																			\
 		pte32_t *ptb, *pte;																		\
-		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
+		for(offset_t p = (offset_t)(_start_); p < (offset_t)(_end_); p += PDE_OFFSET) {			\
 			pde = &(_pgd_)[pd32_idx(p)];														\
 			ptb = pde->p ? (pte32_t*)(pde->addr << 12) : pop_ptb();								\
 			set_krn_pde( pde, ptb );															\
 																								\
-			for(offset_t t = p; t <= min(p + PDE_OFFSET - 1, _end_); t += PTE_OFFSET) {			\
+			for(offset_t t = p; t < min(p + PDE_OFFSET - 1, _end_); t += PTE_OFFSET) {			\
 				pte = &ptb[pt32_idx(t)];														\
 				set_krn_pte( pte, t );															\
 			}																					\
@@ -124,12 +127,12 @@
 	{																							\
 		pde32_t *pde;																			\
 		pte32_t *ptb, *pte;																		\
-		for(offset_t p = (offset_t)(_start_); p <= (offset_t)(_end_); p += PDE_OFFSET) {		\
+		for(offset_t p = (offset_t)(_start_); p < (offset_t)(_end_); p += PDE_OFFSET) {			\
 			pde = &(_pgd_)[pd32_idx(p)];														\
 			ptb = pde->p ? (pte32_t*)(pde->addr << 12) : pop_ptb();								\
 			set_usr_pde( pde, ptb );															\
 																								\
-			for(offset_t t = p; t <= min(p + PDE_OFFSET, _end_); t += PTE_OFFSET) {				\
+			for(offset_t t = p; t < min(p + PDE_OFFSET, _end_); t += PTE_OFFSET) {				\
 				pte = &ptb[pt32_idx(t)];														\
 				set_usr_pte( pte, t );															\
 			}																					\

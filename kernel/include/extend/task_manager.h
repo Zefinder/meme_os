@@ -42,6 +42,6 @@ tidx current_task(void);
 void schedule();
 
 // To switch task, everyone maps this so the CR3 change can happen
-void switch_task();
+void __attribute__((section(".shared_usr_code"),aligned(4))) switch_task(tidx task_id);
 
 #endif

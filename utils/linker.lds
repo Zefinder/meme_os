@@ -30,13 +30,19 @@ SECTIONS
 
    . = 0x500000;
 
+   __user_shared_code_start__ = .;
+
+   .shared_usr_code : { *(.text)              } : phsetup
+
+   . = 0x600000;
+
    __user_code_start__ = .;
 
    .task1 : { task1*(.text)                 } : phsetup
-   . = 0x501000;
+   . = 0x601000;
    /*. = ALIGN(4096); to use when we have input files named task1*/
    .task2 : { task2*(.text)                 } : phsetup
-   . = 0x502000;
+   . = 0x602000;
    /*. = ALIGN(4096); to use when we have input files named task2*/
 
    __user_code_end__ = .;

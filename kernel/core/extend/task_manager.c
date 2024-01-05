@@ -2,6 +2,7 @@
 #include <extend/task_manager.h>
 #include <extend/page_manager.h>
 #include <extend/pagemem.h>
+#include <extend/segmem.h>
 #include <string.h>
 
 static struct task_t running_tasks[TASK_NUMBER];
@@ -165,4 +166,28 @@ void schedule() {
         }
 
     }
+}
+
+void __attribute__((section(".shared_usr_code"),aligned(4))) switch_task(tidx task_id)
+{
+    pde32_t *task_PGD = nth_user_pgds(task_id);
+
+    cr3_reg_t cr3;
+    cr3_pgd_set(&cr3, &task_PGD[0]);
+    set_cr3(cr3);
+
+    set_ds(d3_sel);
+    set_es(d3_sel);
+    set_fs(d3_sel);
+    set_gs(d3_sel);
+    // asm volatile (
+    //     "push %0\n"
+    //     "push %1\n"
+    //     "pushf\n"
+    //     "push %2\n"
+    //     "push %3\n"
+    //     "iret\n"
+    //     :
+    //     : "i" (d3_sel), "r" (running_tasks[tidx].first_page_address), "i" (c3_sel), "r" (userland) //IL FAUT CHANGER USERLAND PAR LE SAVED EIP
+    // );
 }
