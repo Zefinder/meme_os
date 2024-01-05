@@ -31,10 +31,10 @@ void init_pgd()
 	krn_identity_map(&PGD[0], TSS_START, TSS_END);
 
 	// Mapping memory for PGDs
-	krn_identity_map(&PGD[0], PGD_START, PGD_START + NUM_PGD*PGD_SIZE - 1);
+	krn_identity_map(&PGD[0], PGD_START, PGD_END);
 
 	// Mapping memory for PTBs
-	krn_identity_map(&PGD[0], PTB_START, PTB_START + NUM_PTB*PTB_SIZE - 1);
+	krn_identity_map(&PGD[0], PTB_START, PTB_END);
 
 	// Mapping memory where PGD is located so it can be accessed
 	// krn_forced_map(&PGD[0], 0xc0000000, &PGD[0], PGD_SIZE);
@@ -44,9 +44,9 @@ void init_pgd()
 	// Mapping user memory
 	usr_identity_map(&PGD[0], USER_START, USER_END); // USR
 
-	// Mapping userland, for now userland is in Kernel memory
-	usr_identity_map(&PGD[0], (offset_t)userland, (offset_t)userland + PTE_OFFSET - 1);
-	usr_identity_map(&PGD[0], (offset_t)printf, (offset_t)userland + PTE_OFFSET - 1);
+	// Mapping userland
+	usr_identity_map(&PGD[0], (offset_t)userland - 0x1000, (offset_t)userland + PTE_OFFSET - 1);
+	// usr_identity_map(&PGD[0], 0x0, 0x068000-1);
 
 
 	/*************** Set up registers ***************/

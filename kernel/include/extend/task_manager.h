@@ -41,4 +41,7 @@ tidx current_task(void);
 // To call when the IRQ0 (clock) rises
 void schedule();
 
+// To switch task, everyone maps this so the CR3 change can happen
+void switch_task();
+
 #endif

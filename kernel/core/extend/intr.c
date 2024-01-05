@@ -18,7 +18,7 @@ void syscall_isr() {
 }
 
 void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
-    debug("SYSCALL eax = %08x\n", ctx->gpr.eax.raw);
+    debug("\n-= SYSCALL eax = %08x =-\n", ctx->gpr.eax.raw);
     switch(ctx->gpr.eax.raw) // Which syscall is it ?
     {
         /*
@@ -26,27 +26,25 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             ebx is in task's address space -> need to translate to kernel address space
         */
         case SYS_READ_CNT:
-            debug("SYS_READ_CNT\n");
-            offset_t virt = ctx->gpr.ebx.raw;
-            debug("virt ->%p\n", (void*)virt);
+            offset_t virt, phys;
 
-            uint32_t tidx = current_task();
+            debug("SYS_READ_CNT:\n");
+            virt = ctx->gpr.ebx.raw;
+            debug("\tvirt     -> %p\n", (void*)virt);
 
-            pde32_t* task_PGD = nth_user_pgds(tidx);
-            debug("task_PGD ->%p\n", task_PGD);
+            // uint32_t tidx = current_task();
+
+            // pde32_t* task_PGD = nth_user_pgds(tidx);
+            pde32_t* task_PGD = nth_pgd_gbl(0);
+            debug("\ttask_PGD -> %p\n", task_PGD);
+            
             pte32_t* task_PTB = (pte32_t*)((task_PGD[pd32_idx(virt)].addr) << 12);
-            debug("task_PTB ->%p\n", task_PTB);
-            offset_t phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 10) - 1)) );
-            debug("phys ->%p\n", (void*)phys);
+            debug("\ttask_PTB -> %p\n", task_PTB);
 
-            // Trick for compiling
-            // TODO
-            uint32_t a;
-            a = (uint32_t)phys;
-            a = (uint32_t)tidx;
-            a = (uint32_t)task_PGD;
-            a = (uint32_t)task_PTB;
-            a = a;
+            phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 12) - 1)) );
+            debug("\tphys     -> %p\n", (void*)phys);
+
+            debug("\n\tCNT = %d\n", *((int*)phys));
 
             break;
         
@@ -54,25 +52,26 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             break;
 
     }
-    debug("Exiting SYSCALL\n");
+    debug("-= Exiting SYSCALL =-\n");
 }
 
 
-// void irq0_isr() {
-//    asm volatile (
-//       "leave\n\t" "pusha\n\t"
-//       "mov %esp, %eax\n\t"
-//       "call irq0_handler\n\t"
-//       "popa\n\t" "iret\n\t"
-//       );
-// }
+void irq0_isr() {
+   asm volatile (
+      "leave\n\t" "pusha\n\t"
+      "mov %esp, %eax\n\t"
+      "call irq0_handler\n\t"
+      "popa\n\t" "iret\n\t"
+      );
+}
 
 // int tick = 0;
-// void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
-//     debug("IRQ0 ebx = %08x\n", ctx->gpr.ebx.raw);
-//     if (++tick % 18 == 0)
-//         debug("Switching tasks!\n");
-// }
+// This the scheduler
+void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
+    debug("IRQ0 ebx = %08x\n", ctx->gpr.ebx.raw);
+    // if (++tick % 18 == 0)
+        debug("Switching tasks!\n");
+}
 
 // void set_interval()
 // {
