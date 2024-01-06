@@ -9,7 +9,7 @@
 #include <extend/print_utils.h>
 #include <extend/userland.h>
 
-// #include <intr.h>
+#include <extend/timer.h>
 
 /************************************************/
 /**        Goes into ring 3 (usermode)         **/
@@ -47,6 +47,11 @@ void tp() {
 
    // Init the PGD (duh)
 	init_pgd();
+
+   // debug("Waiting 3 secs\n");
+   // // Waits for 3 seconds to display a message
+   // wait(3);
+   // debug("Waited!\n");
 
    // Jump into ring 3 for testing
    go_ring_3(USER_END);

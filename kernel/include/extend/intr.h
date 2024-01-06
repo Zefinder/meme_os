@@ -1,9 +1,8 @@
 #ifndef __EXTEND_INTR_H__
 #define __EXTEND_INTR_H__
 
-
-// Programmable Interval Timer
-#define PIT_SPEED               1193180
+// PIC and PIT
+#define PIC_MASTER_PORT         0x21
 #define PIT_CHANNEL_0_PORT      0x40
 #define PIT_COMMAND_REGISTER    0x43
 
@@ -26,12 +25,15 @@
 #define PIT_BINARY_MODE         0b00000000
 #define PIT_BCD_MODE            0b00000001
 
+#define IRQ0_MASK_ENABLE        0b11111110
+
 // Interrupts
 #define INT_IRQ0        0x20
 #define INT_SYSCALL     0x80
 
 // IRQ constants
-#define IRQ0_FREQUENCY  PIT_SPEED/1000
+#define PIT_CHANNEL0_FREQUENCY  18  // Hz
+#define IRQ0_WAITING_TICKS      3   // Divides frequency
 
 // Syscalls, move later to other file of defines
 #define SYS_READ_CNT    1
