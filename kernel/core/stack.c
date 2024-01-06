@@ -14,6 +14,7 @@ void stack_trace(offset_t from)
    ebp = (offset_t*)from;
    while(ebp && ebp < &__kernel_start__)
    {
+      // break;
       eip = (offset_t*)(*(ebp+1));
       ebp = (offset_t*)(*ebp);
       printf("%p\n", (void*)eip);

@@ -52,12 +52,13 @@
 /**    _pgd_  : address of PGD                **/
 /**    _ptb_  : address of PTB                **/
 /***********************************************/
+// CHANGE LVL LATER, FOR SOME REASON LVL DOESN'T WANT TO TAKE THE LEAST PRIVILEGES WITH LVL = LVL
 #define set_krn_pde(_pde_,_ptb_)				\
 	{											\
 		(_pde_)->raw 	= (offset_t)_ptb_;		\
 		(_pde_)->p		= 1;					\
 		(_pde_)->rw		= 1;					\
-		(_pde_)->lvl	= 0;					\
+		(_pde_)->lvl	= 1;					\
 		(_pde_)->pwt	= 0;					\
 		(_pde_)->pcd	= 0;					\
 		(_pde_)->acc	= 0;					\
@@ -88,7 +89,7 @@
 /**              in PTE                       **/
 /***********************************************/
 #define set_krn_pte(_pte_,_phys_)							\
-	pg_set_entry(_pte_, PG_RW, pg_4K_nr(_phys_))
+	pg_set_entry(_pte_, PG_RW | PG_USR, pg_4K_nr(_phys_))
 
 #define set_usr_pte(_pte_,_phys_)							\
 	pg_set_entry(_pte_, PG_RW | PG_USR, pg_4K_nr(_phys_))
@@ -111,12 +112,14 @@
 	{																							\
 		pde32_t *pde;																			\
 		pte32_t *ptb, *pte;																		\
-		for(offset_t p = (offset_t)(_start_); p < (offset_t)(_end_); p += PDE_OFFSET) {			\
+		offset_t page_start = pg_4K_align(_start_);												\
+		offset_t page_end = pg_4K_align_next(_end_ - 1);										\
+		for(offset_t p = page_start; p < page_end; p += PDE_OFFSET) {							\
 			pde = &(_pgd_)[pd32_idx(p)];														\
 			ptb = pde->p ? (pte32_t*)(pde->addr << 12) : pop_ptb();								\
 			set_krn_pde( pde, ptb );															\
 																								\
-			for(offset_t t = p; t < min(p + PDE_OFFSET - 1, _end_); t += PTE_OFFSET) {			\
+			for(offset_t t = p; t < min(pg_4M_align_next(p), page_end); t += PTE_OFFSET) {		\
 				pte = &ptb[pt32_idx(t)];														\
 				set_krn_pte( pte, t );															\
 			}																					\
@@ -127,12 +130,14 @@
 	{																							\
 		pde32_t *pde;																			\
 		pte32_t *ptb, *pte;																		\
-		for(offset_t p = (offset_t)(_start_); p < (offset_t)(_end_); p += PDE_OFFSET) {			\
+		offset_t page_start = pg_4K_align(_start_);												\
+		offset_t page_end = pg_4K_align_next(_end_ - 1);										\
+		for(offset_t p = page_start; p < page_end; p += PDE_OFFSET) {							\
 			pde = &(_pgd_)[pd32_idx(p)];														\
 			ptb = pde->p ? (pte32_t*)(pde->addr << 12) : pop_ptb();								\
 			set_usr_pde( pde, ptb );															\
 																								\
-			for(offset_t t = p; t < min(p + PDE_OFFSET, _end_); t += PTE_OFFSET) {				\
+			for(offset_t t = p; t < min(pg_4M_align_next(p), page_end); t += PTE_OFFSET) {		\
 				pte = &ptb[pt32_idx(t)];														\
 				set_usr_pte( pte, t );															\
 			}																					\

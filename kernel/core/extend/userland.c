@@ -9,9 +9,12 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    // Syscall
    int read_cnt = SYS_READ_CNT;
    asm volatile ("int %2\n\t" :: "a" (read_cnt), "b" (val) , "i" (INT_SYSCALL));
+   toto = 254;
+   asm volatile ("int %2\n\t" :: "a" (read_cnt), "b" (val) , "i" (INT_SYSCALL));
 
+   asm volatile ("int %0\n\t" :: "i" (INT_IRQ0));
    // Priviledged, should provoke an exception
-   asm volatile ("mov %eax, %cr0\n\t");
+   // asm volatile ("mov %eax, %cr0\n\t");
 
    while(1);
 }

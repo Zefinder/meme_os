@@ -67,8 +67,9 @@ void init_task_pagemem(tidx task_id, void *task)
 	pde32_t* krn_PGD = nth_pgd_gbl(0);
 	pde32_t* usr_PGD = nth_user_pgds(task_id);
 
-	usr_identity_map(&usr_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task2 code for task2
-	krn_identity_map(&krn_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task2 code for Kernel
+	debug("TASK FROM 0x%lx TO 0x%lx\n", (offset_t)task, (offset_t)task + PAGE_SIZE);
+	krn_identity_map(&krn_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for kernel
+	usr_identity_map(&usr_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for task
 
 	switch (task_id) {
 		case 0:
@@ -99,7 +100,7 @@ void task_forced_map(tidx task, offset_t virtual_address_start, offset_t physica
     usr_forced_map(usr_pgd, virtual_address_start, physical_address, size);
 
     // Put in kernel ptb
-    krn_identity_map(krn_pgd, physical_address, physical_address + size - 1);
+    krn_identity_map(krn_pgd, physical_address, physical_address + size);
 
 }
 

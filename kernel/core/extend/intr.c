@@ -6,6 +6,7 @@
 #include <extend/pagemem.h>
 #include <extend/task_manager.h>
 #include <debug.h>
+#include <string.h>
 
 
 void syscall_isr() {
@@ -66,12 +67,32 @@ void irq0_isr() {
 }
 
 // int tick = 0;
-// This the scheduler
+// This calls the scheduler
 void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
-    debug("IRQ0 ebx = %08x\n", ctx->gpr.ebx.raw);
+    debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
+    tidx old_task = current_task();
+
     // if (++tick % 18 == 0)
         debug("Switching tasks!\n");
-        save_task_ctx(ctx);
+        int_ctx_t *new_ctx = schedule();
+        debug("New context retreived\n");
+
+        // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
+        // if (current_task() != old_task) {
+            debug("Saving context\n");
+            save_task_ctx(old_task, ctx);
+            debug("Context saved, loading new context\n");
+            memcpy(new_ctx, ctx, sizeof(int_ctx_t));
+            debug("New context loaded, loading new PGD\n");
+
+            pde32_t *task_PGD = nth_user_pgds(current_task());
+            cr3_reg_t cr3;
+            cr3_pgd_set(&cr3, &task_PGD[0]);
+            set_cr3(cr3);
+            debug("PGD loaded\n");
+        // } else {
+        //     debug("Same task, continuing\n");
+        // }
 }
 
 // void set_interval()
@@ -89,9 +110,9 @@ void init_idt(void)
 
     // set_interval();
     // // Setup syscall via interrupt
-	// idtr.desc[INT_IRQ0].offset_1 = (uint16_t)((uint32_t)irq0_isr & 0xffff);
-	// idtr.desc[INT_IRQ0].offset_2 = (uint16_t)((uint32_t)irq0_isr >> 16);
-    // idtr.desc[INT_IRQ0].dpl = 3; // Test appel direct
+	idtr.desc[INT_IRQ0].offset_1 = (uint16_t)((uint32_t)irq0_isr & 0xffff);
+	idtr.desc[INT_IRQ0].offset_2 = (uint16_t)((uint32_t)irq0_isr >> 16);
+    idtr.desc[INT_IRQ0].dpl = 3; // Test appel direct
 
     // Setup syscall via interrupt
 	idtr.desc[INT_SYSCALL].offset_1 = (uint16_t)((uint32_t)syscall_isr & 0xffff);

@@ -41,12 +41,12 @@ struct task_t* show_tasks(void);
 tidx current_task(void);
 
 // To call when the IRQ0 (clock) rises
-void schedule(void);
+int_ctx_t *schedule(void);
 
 // To switch task, everyone maps this so the CR3 change can happen
 void __attribute__((section(".shared_usr_code"),aligned(4))) load_task_pgd(tidx task_id);
 
-// Save context for current task at task switch
-void __attribute__((section(".shared_usr_code"),aligned(4))) save_task_ctx(int_ctx_t *ctx);
+// Save context for task at task switch
+void __attribute__((section(".shared_usr_code"),aligned(4))) save_task_ctx(tidx task_id, int_ctx_t *ctx);
 
 #endif

@@ -39,10 +39,15 @@ SECTIONS
    __user_code_start__ = .;
 
    .task1 : { task1*(.text)                 } : phsetup
+
    . = 0x601000;
+
    /*. = ALIGN(4096); to use when we have input files named task1*/
+
    .task2 : { task2*(.text)                 } : phsetup
+
    . = 0x602000;
+   
    /*. = ALIGN(4096); to use when we have input files named task2*/
 
    __user_code_end__ = .;
