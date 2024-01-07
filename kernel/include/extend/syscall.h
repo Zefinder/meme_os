@@ -12,7 +12,7 @@
 int create_new_task_syscall(void* task_address);
 
 // Syscall2
-void write_stdout_syscall(const char *format, int value);
+void write_stdout_syscall(const char *format, ...);
 
 // Syscall6
 int read_shared_memory_syscall(int* address);

@@ -1,3 +1,5 @@
+#include <print.h>
+
 #include <extend/syscall.h>
 #include <extend/intr.h>
 
@@ -10,8 +12,11 @@ int create_new_task_syscall(void* task_address) {
 }
 
 // Syscall2
-void write_stdout_syscall(const char *format, int value) {
-    asm volatile ("int %3\n\t" :: "a" (WRITE_STDOUT_SYSCALL), "b" (format), "c" (value) , "i" (INT_SYSCALL)); 
+void write_stdout_syscall(const char *format, ...) {
+    va_list params;
+    va_start(params, format);
+    asm volatile ("int %3\n\t" :: "a" (WRITE_STDOUT_SYSCALL), "b" (format), "c" (&params) , "i" (INT_SYSCALL));
+    va_end(params);
 }
 
 // Syscall6

@@ -50,6 +50,7 @@ Pour demander la **création d'une tâche**, un appel système est lancé. Voici
 |   6   |        Lire la mémoire partagée         |
 |   7   |     Ecrire sur la mémoire partagée      |
 |   8   |     Afficher le tableau des tâches      |
+|   9   |       Start scheduling (**TODO**)       |
 
 ### Le kernel
 

@@ -67,9 +67,10 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
         case WRITE_STDOUT_SYSCALL:
             // debug("WRITE_STDOUT_SYSCALL:\n");
             int format_address = translate_address(ctx->gpr.ebx.raw);
+            int params_address = translate_address(ctx->gpr.ecx.raw);
             char* format = (char*) format_address;
-            int value = ctx->gpr.ecx.raw;
-            debug(format, value);
+            va_list params = *(va_list*) params_address;
+            __vprintf(format, params);
             break;
 
         /*

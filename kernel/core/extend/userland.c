@@ -7,7 +7,6 @@
 
 void __attribute__((section(".task2"),aligned(4))) userland()
 {
-
    // Task creation
    int task_create;
    if ((task_create = create_new_task_syscall(task1)) != 0) {
