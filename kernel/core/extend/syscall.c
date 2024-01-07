@@ -1,8 +1,30 @@
+#include <print.h>
+
 #include <extend/syscall.h>
 #include <extend/intr.h>
 
 // Syscall0
-void create_new_task_syscall() {
+int create_new_task_syscall(void* task_address) {
+    int creation_value;
+    // Result in edx
+    asm volatile ("int %3\n\t" : "=d"(creation_value) : "a" (CREATE_NEW_TASK_SYSCALL), "b" (task_address), "i" (INT_SYSCALL));
+    return creation_value;
+}
+
+// Syscall1
+int kill_task_syscall() {
+    int kill_value;
+    // Result in edx
+    asm volatile ("int %2\n\t" : "=d"(kill_value) : "a" (KILL_TASK_SYSCALL), "i" (INT_SYSCALL));
+    return kill_value;
+}
+
+// Syscall2
+void write_stdout_syscall(const char *format, ...) {
+    va_list params;
+    va_start(params, format);
+    asm volatile ("int %3\n\t" :: "a" (WRITE_STDOUT_SYSCALL), "b" (format), "c" (&params) , "i" (INT_SYSCALL));
+    va_end(params);
 }
 
 // Syscall6
@@ -15,6 +37,20 @@ int read_shared_memory_syscall(int* address) {
 
 // Syscall7
 void write_shared_memory_syscall(int* address, int value) {
-    address = address;
-    value = value;
+    asm volatile ("int %3\n\t" :: "a" (WRITE_SHARED_SYSCALL), "b" (address), "c" (value) , "i" (INT_SYSCALL)); 
+}
+
+// Syscall8
+void show_running_tasks_syscall() {
+    asm volatile ("int %1\n\t" :: "a" (SHOW_RUNNING_TASKS) , "i" (INT_SYSCALL)); 
+}
+
+// Syscall9
+void start_scheduling_syscall() {
+    asm volatile ("int %1\n\t" :: "a" (START_SCHEDULING_SYSCALL) , "i" (INT_SYSCALL)); 
+}
+
+// Syscall10
+void shutdown_syscall() {
+    asm volatile ("int %1\n\t" :: "a" (SHUTDOWN_SYSCALL) , "i" (INT_SYSCALL)); 
 }

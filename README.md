@@ -39,16 +39,18 @@ Les spécifications ne sont pas nombreuses mais il est quand même intéressant 
 L'**utilisateur** a des droits **restreints** (normal) et est forcément lancé par le pépin. Il a de base **une page mémoire** allouée mais il peut en demander une **deuxième** s'il s'étend trop (en cas de première page fault). Bien sûr, il ne peut pas accéder aux **données du pépin** ! Chaque tâche est **isolée** des autres, faisant qu'il est impossible qu'une tâche puisse lire dans celle d'un autre.
 
 Pour demander la **création d'une tâche**, un appel système est lancé. Voici la liste des différents **appels système** implémentés : 
-|  Id   |                Description                |
-| :---: | :---------------------------------------: |
-|   0   |    Créer une nouvelle tâche (**TODO**)    |
-|   1   |       Arrêter une tâche (**TODO**)        |
-|   2   | Ecrire sur la sortie standard (**TODO**)  |
-|   3   |  Ecrire sur l'entrée standard (**TODO**)  |
-|   4   |   Demander une page partagée (**TODO**)   |
-|   5   |        Exécuter du code (**TODO**)        |
-|   6   |    Lire la mémoire partagée (**TODO**)    |
-|   7   | Ecrire sur la mémoire partagée (**TODO**) |
+|  Id   |               Description               |
+| :---: | :-------------------------------------: |
+|   0   |        Créer une nouvelle tâche         |
+|   1   |      Arrêter une tâche (**TODO**)       |
+|   2   |      Ecrire sur la sortie standard      |
+|   3   | Ecrire sur l'entrée standard (**TODO**) |
+|   4   |  Demander une page partagée (**TODO**)  |
+|   5   |              Eteindre l'OS              |
+|   6   |        Lire la mémoire partagée         |
+|   7   |     Ecrire sur la mémoire partagée      |
+|   8   |     Afficher le tableau des tâches      |
+|   9   |       Commencer l'ordonnancement        |
 
 ### Le kernel
 

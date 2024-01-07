@@ -108,24 +108,22 @@ int ask_second_user_page(tidx task_id) {
 
 // Ends the task specified by its task id, return 1 if task couldn't be ended (eg. task id do not exist)
 int end_task(tidx task_id) {
-    // Go through all running tasks
-    for (int task_index = 0; task_index < TASK_NUMBER; task_index++) {
-        if (running_tasks[task_index].task_id == task_id && running_tasks[task_index].is_alive) {
-            // If found and alive, we put is_alive to 0
-            running_tasks[task_index].is_alive = 0;
+    // If the index is alive then we end it
+    if (running_tasks[task_id].is_alive) {
+        // If found and alive, we put is_alive to 0
+        running_tasks[task_id].is_alive = 0;
 
-            // We free user pages
-            free_task_pages(running_tasks[task_index], task_index);
+        // We free user pages
+        free_task_pages(running_tasks[task_id], task_id);
 
-            // We push back the task index
-            push_task_index(task_index);
+        // We push back the task index
+        push_task_index(task_id);
 
-            // We return 0
-            return 0;
-        }
+        // We return 0
+        return 0;
     }
 
-    // If not found then return 1
+    // Else return 1
     return 1;
 }
 

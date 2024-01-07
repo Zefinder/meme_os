@@ -9,9 +9,6 @@
 #include <extend/print_utils.h>
 #include <extend/userland.h>
 
-#include <task1.h>
-#include <task2.h>
-
 // #include <intr.h>
 
 /************************************************/
@@ -53,31 +50,9 @@ void tp() {
    // Init the kernel PGD (duh)
 	init_pgd();
 
-   // Let's go testing !
+   // Init task manager (duh)
    init_task_manager();
-   struct task_t* tasks = show_tasks();
 
-   if (create_task(task1) == 1)
-      debug("FUCK\n");
-
-   debug(
-      "Task %d:\n"
-      "    first page -> 0x%lx\n"
-      "    quantum    -> %d\n"
-      "    is_alive   -> %d\n",
-   tasks->task_id, tasks->first_page_address, tasks->quantum, tasks->is_alive
-   );
-
-   if (create_task(task2) == 1)
-      debug("FUCK\n");
-
-   debug(
-      "Task %d:\n"
-      "    first page -> 0x%lx\n"
-      "    quantum    -> %d\n"
-      "    is_alive   -> %d\n",
-   (tasks+1)->task_id, (tasks+1)->first_page_address, (tasks+1)->quantum, (tasks+1)->is_alive
-   );
-
+   // Launching into usermode
    go_ring_3(userland, USER_END - 0x4);
 }
