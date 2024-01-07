@@ -5,6 +5,7 @@
 #define PIC_MASTER_PORT         0x21
 #define PIT_CHANNEL_0_PORT      0x40
 #define PIT_COMMAND_REGISTER    0x43
+#define KEYBOARD_PORT           0x60
 
 #define PIT_CHANNEL_0_SEL       0b00000000
 #define PIT_CHANNEL_1_SEL       0b01000000
@@ -25,10 +26,11 @@
 #define PIT_BINARY_MODE         0b00000000
 #define PIT_BCD_MODE            0b00000001
 
-#define IRQ0_MASK_ENABLE        0b11111110
+#define IRQs_MASK_ENABLE        0b11111100
 
 // Interrupts
 #define INT_IRQ0        0x20
+#define INT_IRQ1        0x21
 #define INT_SYSCALL     0x80
 
 // IRQ constants

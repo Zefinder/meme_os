@@ -57,6 +57,7 @@ void* memset(void*, uint8_t, size_t);
 void* memcpy(void*, void*, size_t);
 char* strchr(char*, size_t, char);
 size_t strlen(char*);
+int strncmp (const char* s1, const char* s2, size_t n);
 
 /*
 ** Prototypes print.c

@@ -20,18 +20,27 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    show_running_tasks_syscall();
 
    // Writing to shared page and reading it
-   int compteur = 666;
+   int compteur = 0;
    int* compteur_address = (int*) 0x414000;
-   write_stdout_syscall("Writing %d to the shared memory...\n", compteur);
-   write_shared_memory_syscall(compteur_address, compteur);
-   int result = read_shared_memory_syscall(compteur_address);
-   write_stdout_syscall("Value of read counter = %d\n", result);
+
+   // Small hint
+   write_stdout_syscall("%s\n", "\n-------------------------------------");
+   write_stdout_syscall("%s\n", "\nPress ENTER to switch to command mode\n");
+   write_stdout_syscall("%s\n", "-------------------------------------\n");
 
    // Enable schedule
-   start_scheduing_syscall();
+   start_scheduling_syscall();
+
+   while (1) {
+      wait(1);
+      write_stdout_syscall("Writing %d to the shared memory...\n", compteur);
+      write_shared_memory_syscall(compteur_address, compteur++);
+      int result = read_shared_memory_syscall(compteur_address);
+      write_stdout_syscall("Value of read counter = %d\n", result);
+   }
 
    // Wait for 10 seconds doing nothing...
-   wait(10);
+   // wait(100);
 
    // write_stdout_syscall("%s\n", "Killing first task");
    // int task_kill;
@@ -43,10 +52,8 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    // show_running_tasks_syscall();
 
    // Shutdown
-   shutdown_syscall();
+   // shutdown_syscall();
 
    // Priviledged, should provoke an exception
    // asm volatile ("mov %eax, %cr0\n\t");
-
-   while(1);
 }
