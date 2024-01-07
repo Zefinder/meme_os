@@ -40,8 +40,8 @@
 
 typedef struct cpu_context
 {
-   raw32_t         nr;
-   excp_err_code_t err;
+   raw32_t         nr; // ??
+   excp_err_code_t err; // ??? this shouldn't be here, this is even used at interrupt even though after context saved these are no longer here
    raw32_t         eip;
    raw32_t         cs;
    eflags_reg_t    eflags;

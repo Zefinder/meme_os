@@ -38,6 +38,17 @@
 
 
 void tp() {
+
+   // offset_t ebp = get_ebp();
+   // offset_t esp = get_esp();
+
+   offset_t offset = (KSTACK_END - 0x4) - get_ebp();
+   offset_t new_ebp = offset + get_ebp();
+   offset_t new_esp = offset + get_esp();
+
+   set_esp( new_esp );
+   set_ebp( new_ebp );
+
    // Init the GDT (duh)
    init_gdt();
 

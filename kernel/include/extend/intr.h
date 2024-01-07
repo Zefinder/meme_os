@@ -38,6 +38,7 @@
 #define IRQ0_WAITING_TICKS      18  // Divides frequency (18 is 1 per second)
 
 void init_idt(void);
+void __attribute__((section(".shared_usr_code"),aligned(4))) irq0_isr(void);
 void __regparm__(1) __attribute__((section(".shared_usr_code"),aligned(4))) irq0_handler(int_ctx_t *ctx);
 
 #endif

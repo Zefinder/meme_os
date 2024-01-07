@@ -44,6 +44,7 @@ void init_tss()
 {
    tss_t* TSS = (tss_t*)TSS_START;
    
+   // TSS->s0.esp  = KSTACK_END - 0x4;
    TSS->s0.esp  = get_ebp();
    TSS->s0.ss   = d0_sel;
    TSS->ds      = d0_sel;

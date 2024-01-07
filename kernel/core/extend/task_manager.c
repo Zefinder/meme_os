@@ -45,7 +45,7 @@ int create_task(void *task) {
     }
 
     // Else we ask for a user page
-    offset_t first_page_index = 1;//map_user_page(task_index);
+    offset_t first_page_index = map_user_page(task_index);
     
     // If address is 0 then repush the task index and we return 1
     if (first_page_index == 0ul) {
@@ -65,9 +65,14 @@ int create_task(void *task) {
     running_tasks[task_index].ctx.cs.raw        = c3_sel;
     running_tasks[task_index].ctx.ss.raw        = d3_sel;
     running_tasks[task_index].ctx.eip.raw       = (offset_t)task;
-    running_tasks[task_index].ctx.esp.raw       = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4; // 4 bytes for the previous ebp
-    running_tasks[task_index].ctx.gpr.ebp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
-    running_tasks[task_index].ctx.gpr.esp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
+    running_tasks[task_index].ctx.esp.raw       = 0x1000 - 0x4; // 4 bytes for the previous ebp
+    asm volatile ("pushf\n\t pop %eax\n\t");
+    running_tasks[task_index].ctx.eflags.raw    = get_reg(eax);
+    // running_tasks[task_index].ctx.esp.raw       = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4; // 4 bytes for the previous ebp
+    // running_tasks[task_index].ctx.gpr.ebp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
+    // running_tasks[task_index].ctx.gpr.esp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
+    running_tasks[task_index].ctx.gpr.ebp.raw   = 0x1000 - 0x4;
+    running_tasks[task_index].ctx.gpr.esp.raw   = 0x1000 - 0x4;
 
     // Add 1 to task count
     next_task_id++;
@@ -190,5 +195,5 @@ void __attribute__((section(".shared_usr_code"),aligned(4))) load_task_pgd(tidx 
 
 void __attribute__((section(".shared_usr_code"),aligned(4))) save_task_ctx(tidx task_id, int_ctx_t *ctx)
 {
-    memcpy(ctx, &(running_tasks[task_id].ctx), sizeof(int_ctx_t));
+    memcpy(&(running_tasks[task_id].ctx), ctx, sizeof(int_ctx_t));
 }

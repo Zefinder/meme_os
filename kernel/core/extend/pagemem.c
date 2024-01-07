@@ -72,7 +72,10 @@ void init_task_pagemem(tidx task_id, void *task)
 	krn_identity_map(&krn_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for kernel
 	usr_identity_map(&usr_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for task
 
+	usr_identity_map(&usr_PGD[0], (offset_t)irq0_isr, (offset_t)irq0_isr + PAGE_SIZE);   // map irq0 handler code for task (because cr3 is changed there)
 	usr_identity_map(&usr_PGD[0], (offset_t)irq0_handler, (offset_t)irq0_handler + PAGE_SIZE);   // map irq0 handler code for task (because cr3 is changed there)
+	usr_identity_map(&usr_PGD[0], KSTACK_START, KSTACK_END);	// Oh my god what have we done, but no time left for kernel stacks for tasks aaaaa
+	usr_identity_map(&usr_PGD[0], USER_END - PAGE_SIZE, USER_END);	// What am I doing
 
 	switch (task_id) {
 		case 0:

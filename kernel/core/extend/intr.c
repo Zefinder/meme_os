@@ -144,14 +144,14 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
     // debug("-= Exiting SYSCALL =-\n");
 }
 
-void irq0_isr() {
+void __attribute__((section(".shared_usr_code"),aligned(4))) irq0_isr() {
    asm volatile (
       "leave\n\t" "pusha\n\t"
       "mov %esp, %eax\n\t"
       "call irq0_handler\n\t"
       "movb $0x20, %al\n\t" // Set to PIC control port
       "movw $0x20, %dx\n\t" // Send EOI to PIC
-      "outb %al, %dx\n\t" 
+      "outb %al, %dx\n\t"
       "popa\n\t" "iret\n\t"
       );
 }
@@ -160,6 +160,8 @@ int tick = 0;
 // This calls the scheduler
 void __regparm__(1) __attribute__((section(".shared_usr_code"),aligned(4))) irq0_handler(int_ctx_t *ctx) {
     tidx old_task = current_task();
+
+    increment_timer();
 
     if (schedule_enabled) {
         if (++tick % IRQ0_WAITING_TICKS == 0) {
@@ -173,7 +175,8 @@ void __regparm__(1) __attribute__((section(".shared_usr_code"),aligned(4))) irq0
                 debug("Saving context\n");
                 save_task_ctx(old_task, ctx);
                 debug("Context saved, loading new context\n");
-                memcpy(new_ctx, ctx, sizeof(int_ctx_t));
+                memcpy(ctx, new_ctx, sizeof(int_ctx_t));
+                memcpy(&(ctx->nr), &(ctx->eip), 5*sizeof(raw32_t)); // Ignore nr and err, they are not present here
                 debug("New context loaded, loading new PGD\n");
 
                 // pde32_t *task_PGD = nth_pgd_gbl(0);
@@ -181,14 +184,12 @@ void __regparm__(1) __attribute__((section(".shared_usr_code"),aligned(4))) irq0
                 cr3_reg_t cr3;
                 cr3_pgd_set(&cr3, &task_PGD[0]);
                 set_cr3(cr3);
-                debug("PGD loaded\n");
+                // write_stdout_syscall("PGD loaded\n");
             } else {
                 debug("Same task, continuing\n");
             }
         }
     }
-
-    increment_timer();
 }
 
 void set_interval() {
