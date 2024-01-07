@@ -5,6 +5,7 @@
 #include <task1.h>
 #include <task2.h>
 #include <debug.h>
+#include <extend/intr.h>
 
 void init_pgd()
 {
@@ -71,17 +72,13 @@ void init_task_pagemem(tidx task_id, void *task)
 	krn_identity_map(&krn_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for kernel
 	usr_identity_map(&usr_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for task
 
+	usr_identity_map(&usr_PGD[0], (offset_t)irq0_handler, (offset_t)irq0_handler + PAGE_SIZE);   // map irq0 handler code for task (because cr3 is changed there)
+
 	switch (task_id) {
 		case 0:
-			// usr_identity_map(&usr_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for task1
-			// krn_identity_map(&krn_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for Kernel
-
             usr_forced_map(&usr_PGD[0], 0x2000000, SHARED_START, PAGE_SIZE);                   // map shared memory (1 page)
 			break;
 		case 1:
-			// usr_identity_map(&usr_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for task2
-			// krn_identity_map(&krn_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for Kernel
-
             usr_forced_map(&usr_PGD[0], 0x4000000, SHARED_START, PAGE_SIZE);                   	// map shared memory (1 page)
 			break;
 		default:

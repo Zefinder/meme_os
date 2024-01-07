@@ -28,7 +28,7 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    write_stdout_syscall("Value of read counter = %d\n", result);
 
    // Enable schedule
-   start_scheduing_syscall();
+   start_scheduling_syscall();
 
    // Wait for 10 seconds doing nothing...
    wait(10);

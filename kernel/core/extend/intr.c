@@ -158,31 +158,33 @@ void irq0_isr() {
 
 int tick = 0;
 // This calls the scheduler
-void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
-    // tidx old_task = current_task();
+void __regparm__(1) __attribute__((section(".shared_usr_code"),aligned(4))) irq0_handler(int_ctx_t *ctx) {
+    tidx old_task = current_task();
 
     if (schedule_enabled) {
         if (++tick % IRQ0_WAITING_TICKS == 0) {
             debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
             debug("Switching tasks!\n");
-            // int_ctx_t *new_ctx = schedule();
+            int_ctx_t *new_ctx = schedule();
             debug("New context retreived\n");
 
             // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
-            // if (current_task() != old_task) {
-            debug("Saving context\n");
-            // save_task_ctx(old_task, ctx);
-            debug("Context saved, loading new context\n");
-            // memcpy(new_ctx, ctx, sizeof(int_ctx_t));
-            debug("New context loaded, loading new PGD\n");
+            if (current_task() != old_task) {
+                debug("Saving context\n");
+                save_task_ctx(old_task, ctx);
+                debug("Context saved, loading new context\n");
+                memcpy(new_ctx, ctx, sizeof(int_ctx_t));
+                debug("New context loaded, loading new PGD\n");
 
-            // pde32_t *task_PGD = nth_user_pgds(current_task());
-            // cr3_reg_t cr3;
-            // cr3_pgd_set(&cr3, &task_PGD[0]);
-            // set_cr3(cr3);
-            // debug("PGD loaded\n");
-            // } else {
-            //     debug("Same task, continuing\n");
+                // pde32_t *task_PGD = nth_pgd_gbl(0);
+                pde32_t *task_PGD = nth_user_pgds(current_task());
+                cr3_reg_t cr3;
+                cr3_pgd_set(&cr3, &task_PGD[0]);
+                set_cr3(cr3);
+                debug("PGD loaded\n");
+            } else {
+                debug("Same task, continuing\n");
+            }
         }
     }
 
