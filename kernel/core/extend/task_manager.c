@@ -66,9 +66,10 @@ int create_task(void *task) {
     running_tasks[task_index].ctx.ss.raw        = d3_sel;
     running_tasks[task_index].ctx.eip.raw       = (offset_t)task;
     running_tasks[task_index].ctx.esp.raw       = 0x1000 - 0x4; // 4 bytes for the previous ebp
-    asm volatile ("pushf\n\t pop %eax\n\t");
-    running_tasks[task_index].ctx.eflags.raw    = get_reg(eax);
-    // running_tasks[task_index].ctx.esp.raw       = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4; // 4 bytes for the previous ebp
+    // next two lines for quick testing, don't uncomment, will delete when all over
+    // asm volatile ("pushf\n\t pop %eax\n\t");
+    // running_tasks[task_index].ctx.eflags.raw    = get_reg(eax);
+    
     // running_tasks[task_index].ctx.gpr.ebp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
     // running_tasks[task_index].ctx.gpr.esp.raw   = running_tasks[task_index].first_page_address + PAGE_SIZE - 0x4;
     running_tasks[task_index].ctx.gpr.ebp.raw   = 0x1000 - 0x4;
