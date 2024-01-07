@@ -24,7 +24,7 @@ bash$ git clone https://github.com/Zefinder/meme_os.git
 - Lire la variable et l'afficher à l'écran (**TODO**)
 
 D'autres fonctionnalités sont développées comme :
-- Création d'un gestionnaire de tâches (**TODO**)
+- Création d'un gestionnaire de tâches
 - Création d'un shell avec quelques commandes disponibles (**TODO**)
 - Création de nouvelles tâches qui tournent en parallèle (**TODO**)
 
@@ -39,20 +39,16 @@ Les spécifications ne sont pas nombreuses mais il est quand même intéressant 
 L'**utilisateur** a des droits **restreints** (normal) et est forcément lancé par le pépin. Il a de base **une page mémoire** allouée mais il peut en demander une **deuxième** s'il s'étend trop (en cas de première page fault). Bien sûr, il ne peut pas accéder aux **données du pépin** ! Chaque tâche est **isolée** des autres, faisant qu'il est impossible qu'une tâche puisse lire dans celle d'un autre.
 
 Pour demander la **création d'une tâche**, un appel système est lancé. Voici la liste des différents **appels système** implémentés : 
-|  Id   |          Description          |
-| :---: | :---------------------------: |
-|   0   |   Créer une nouvelle tâche    |
-|   1   |       Arrêter une tâche       |
-|   2   |       Lancer le compte        |
-|   3   |       Arrêter le compte       |
-|   4   |        Lire le compte         |
-|   5   | Ecrire sur la sortie standard |
-|   6   | Ecrire sur l'entrée standard  |
-|   7   |  Demander une page partagée   |
-|   8   |       Exécuter du code        |
-|   9   |   Lire la mémoire partagée    |
-
-**TODO Ajouter les syscall au fur et à mesure**
+|  Id   |                Description                |
+| :---: | :---------------------------------------: |
+|   0   |    Créer une nouvelle tâche (**TODO**)    |
+|   1   |       Arrêter une tâche (**TODO**)        |
+|   2   | Ecrire sur la sortie standard (**TODO**)  |
+|   3   |  Ecrire sur l'entrée standard (**TODO**)  |
+|   4   |   Demander une page partagée (**TODO**)   |
+|   5   |        Exécuter du code (**TODO**)        |
+|   6   |    Lire la mémoire partagée (**TODO**)    |
+|   7   | Ecrire sur la mémoire partagée (**TODO**) |
 
 ### Le kernel
 
