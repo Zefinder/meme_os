@@ -48,10 +48,12 @@ void tp() {
    // Init the PGD (duh)
 	init_pgd();
 
-   // debug("Waiting 3 secs\n");
-   // // Waits for 3 seconds to display a message
-   // wait(3);
-   // debug("Waited!\n");
+   // TESTING, TO REMOVE
+   init_task_manager();
+   create_task();
+   int* counter = (int*) 0x414000;
+   *(counter) = 69420;
+   debug("AAAAAAAAAAAAAAA\n");
 
    // Jump into ring 3 for testing
    go_ring_3(USER_END);

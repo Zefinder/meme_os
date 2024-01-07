@@ -35,9 +35,6 @@
 #define PIT_CHANNEL0_FREQUENCY  18  // Hz
 #define IRQ0_WAITING_TICKS      3   // Divides frequency
 
-// Syscalls, move later to other file of defines
-#define SYS_READ_CNT    1
-
 void init_idt(void);
 
 #endif

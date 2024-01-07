@@ -6,6 +6,7 @@
 
 #include <extend/memory.h>
 #include <extend/intr.h>
+#include <extend/syscall.h>
 #include <extend/pagemem.h>
 #include <extend/task_manager.h>
 #include <extend/timer.h>
@@ -27,8 +28,8 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             Read counter at address in ebx.
             ebx is in task's address space -> need to translate to kernel address space
         */
-        case SYS_READ_CNT:
-            debug("SYS_READ_CNT\n");
+        case READ_SHARED_SYSCALL:
+            debug("READ_SHARED_SYSCALL\n");
             offset_t virt = ctx->gpr.ebx.raw;
             debug("virt ->%p\n", (void*)virt);
 
@@ -49,6 +50,8 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             a = (uint32_t)task_PGD;
             a = (uint32_t)task_PTB;
             a = a;
+
+            ctx->gpr.edx.raw = *((int*) phys);
 
             break;
         
@@ -76,7 +79,7 @@ void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
     ctx->gpr.ebx.raw =ctx->gpr.ebx.raw;
     if (++tick % IRQ0_WAITING_TICKS == 0) {
         // Call scheduler
-        debug("Switching tasks!\n");
+        // debug("Switching tasks!\n");
 
         // Reset ticks
         tick -= IRQ0_WAITING_TICKS;
