@@ -21,44 +21,102 @@ void syscall_isr() {
       );
 }
 
+int translate_address(int address) {
+    // Address translation
+    offset_t phys;
+    // uint32_t tidx = current_task();
+    // pde32_t* task_PGD = nth_user_pgds(tidx);
+    // debug("\tvirt     -> %p\n", (void*)address);
+
+    pde32_t* task_PGD = nth_pgd_gbl(0);
+    // debug("\ttask_PGD -> %p\n", task_PGD);
+    
+    pte32_t* task_PTB = (pte32_t*)((task_PGD[pd32_idx(address)].addr) << 12);
+    // debug("\ttask_PTB -> %p\n", task_PTB);
+    
+    phys = ( (task_PTB[pt32_idx(address)].addr) << 12 ) | ( (address & ((1u << 12) - 1)) );
+    // debug("\tphys     -> %p\n", (void*)phys);
+
+    return phys;
+}
+
 void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
-    debug("\n-= SYSCALL eax = %08x =-\n", ctx->gpr.eax.raw);
-    switch(ctx->gpr.eax.raw) // Which syscall is it ?
+    // debug("\n-= SYSCALL eax = %08x =-\n", ctx->gpr.eax.raw);
+
+    // Which syscall is it ?
+    switch(ctx->gpr.eax.raw) 
     {
         /*
             Read counter at address in ebx.
-            ebx is in task's address space -> need to translate to kernel address space
+            ebx -> address of the task (to translate)
+            edx -> return creation value
+        */
+        case CREATE_NEW_TASK_SYSCALL:
+            // debug("CREATE_NEW_TASK_SYSCALL:\n");
+            // TODO A faire ssi pas kernel qui le lance...
+            // int task_address = translate_address(ctx->gpr.ebx.raw);
+            int task_address = ctx->gpr.ebx.raw;
+            ctx->gpr.edx.raw = create_task((void*) task_address);
+            break;
+
+        /*
+            Prints to stdout the char* and the value
+            ebx -> format (to translate)
+            ecx -> value
+        */
+        case WRITE_STDOUT_SYSCALL:
+            // debug("WRITE_STDOUT_SYSCALL:\n");
+            int format_address = translate_address(ctx->gpr.ebx.raw);
+            char* format = (char*) format_address;
+            int value = ctx->gpr.ecx.raw;
+            debug(format, value);
+            break;
+
+        /*
+            Read counter at address in ebx.
+            ebx -> address in shared page (to translate)
+            edx -> return value
         */
         case READ_SHARED_SYSCALL:
-            offset_t virt, phys;
-
-            debug("READ_SHARED_SYSCALL:\n");
-            virt = ctx->gpr.ebx.raw;
-            debug("\tvirt     -> %p\n", (void*)virt);
-
-            // uint32_t tidx = current_task();
-
-            // pde32_t* task_PGD = nth_user_pgds(tidx);
-            pde32_t* task_PGD = nth_pgd_gbl(0);
-            debug("\ttask_PGD -> %p\n", task_PGD);
-            
-            pte32_t* task_PTB = (pte32_t*)((task_PGD[pd32_idx(virt)].addr) << 12);
-            debug("\ttask_PTB -> %p\n", task_PTB);
-
-            phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 12) - 1)) );
-            debug("\tphys     -> %p\n", (void*)phys);
-
-            debug("\n\tCNT = %d\n", *((int*)phys));
-
-            ctx->gpr.edx.raw = *((int*) phys);
-
+            // debug("READ_SHARED_SYSCALL:\n");
+            int shared_page_address_read = translate_address(ctx->gpr.ebx.raw);
+            ctx->gpr.edx.raw = *((int*) shared_page_address_read);
             break;
-        
+
+        /*
+            Read counter at address in ebx.
+            ebx -> address in shared page (to translate)
+            ecx -> value to write
+        */
+        case WRITE_SHARED_SYSCALL:
+            // debug("WRITE_SHARED_SYSCALL:\n");
+            int shared_page_address_write = translate_address(ctx->gpr.ebx.raw);
+            *((int*) shared_page_address_write) = ctx->gpr.ecx.raw;
+            break;
+
+        /*
+            Prints tasks in the running task array
+        */
+        case SHOW_RUNNING_TASKS:
+            // debug("SHOW_RUNNING_TASKS:\n");
+            struct task_t* tasks = show_tasks();
+            debug(" PID\tFIRST PAGE\tHAS SECOND PAGE\tQUANTUM\tIS ALIVE\n");
+            for (tidx task_index = 0; task_index < TASK_NUMBER; task_index++) {
+                struct task_t task = tasks[task_index];
+                char* yes = "YES";
+                char* no = "NO";
+
+                debug(" %d\t0x%08lx\t%s\t\t%d\t%s\n",
+                    task.task_id,
+                    task.first_page_address,
+                    task.has_second_page ? yes : no,
+                    task.quantum,
+                    task.is_alive ? yes : no);
+            }
         default:
             break;
-
     }
-    debug("-= Exiting SYSCALL =-\n");
+    // debug("-= Exiting SYSCALL =-\n");
 }
 
 void irq0_isr() {
@@ -97,7 +155,6 @@ void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
         // } else {
         //     debug("Same task, continuing\n");
         // }
-}
 
     increment_timer();
 }
@@ -124,5 +181,5 @@ void init_idt(void)
     
     int interrupt_mask = in(PIC_MASTER_PORT); // Reading PIC master port
     out(PIC_MASTER_PORT, interrupt_mask & IRQ0_MASK_ENABLE); // Enabling IRQ0 in PIC
-    force_interrupts_on();
+    // force_interrupts_on();
 }
