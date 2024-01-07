@@ -52,7 +52,7 @@
 #define gdt_set_tss_dsc(_dsc_,_tss_)                     \
    {                                                     \
       raw32_t addr = {.raw = _tss_};                     \
-      (_dsc_)->limit_1   = TSS_LIMIT;                    \
+      (_dsc_)->limit_1   = (uint16_t)TSS_LIMIT;          \
       (_dsc_)->base_1    = addr.wlow;                    \
       (_dsc_)->base_2    = addr._whigh.blow;             \
       (_dsc_)->type      = SEG_DESC_SYS_TSS_AVL_32;      \

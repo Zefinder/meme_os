@@ -31,10 +31,10 @@ void init_pgd()
 	krn_identity_map(&PGD[0], TSS_START, TSS_END);
 
 	// Mapping memory for PGDs
-	krn_identity_map(&PGD[0], PGD_START, PGD_START + NUM_PGD*PGD_SIZE - 1);
+	krn_identity_map(&PGD[0], PGD_START, PGD_END);
 
 	// Mapping memory for PTBs
-	krn_identity_map(&PGD[0], PTB_START, PTB_START + NUM_PTB*PTB_SIZE - 1);
+	krn_identity_map(&PGD[0], PTB_START, PTB_END);
 
 	// Mapping memory where PGD is located so it can be accessed
 	// krn_forced_map(&PGD[0], 0xc0000000, &PGD[0], PGD_SIZE);
@@ -44,9 +44,9 @@ void init_pgd()
 	// Mapping user memory
 	usr_identity_map(&PGD[0], USER_START, USER_END); // USR
 
-	// Mapping userland, for now userland is in Kernel memory
-	usr_identity_map(&PGD[0], (offset_t)userland, (offset_t)userland + PTE_OFFSET - 1);
-	usr_identity_map(&PGD[0], (offset_t)printf, (offset_t)userland + PTE_OFFSET - 1);
+	// Mapping userland
+	usr_identity_map(&PGD[0], (offset_t)userland, (offset_t)userland + PAGE_SIZE);
+	// usr_identity_map(&PGD[0], 0x0, 0x068000-1);
 
 
 	/*************** Set up registers ***************/
@@ -62,29 +62,33 @@ void init_pgd()
 	set_cr0(cr0);
 }
 
-void init_task_pagemem(tidx task)
+void init_task_pagemem(tidx task_id, void *task)
 {
 	pde32_t* krn_PGD = nth_pgd_gbl(0);
-	pde32_t* usr_PGD = nth_user_pgds(task);
+	pde32_t* usr_PGD = nth_user_pgds(task_id);
 
-	switch (task) {
+	debug("TASK FROM 0x%lx TO 0x%lx\n", (offset_t)task, (offset_t)task + PAGE_SIZE);
+	krn_identity_map(&krn_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for kernel
+	usr_identity_map(&usr_PGD[0], (offset_t)task, (offset_t)task + PAGE_SIZE);   // map task code for task
+
+	switch (task_id) {
 		case 0:
-			usr_identity_map(&usr_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for task1
-			krn_identity_map(&krn_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for Kernel
+			// usr_identity_map(&usr_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for task1
+			// krn_identity_map(&krn_PGD[0], (offset_t)task1, (offset_t)task1 + PTE_OFFSET - 1);   // map task1 code for Kernel
 
-            usr_forced_map(&usr_PGD[0], 0x2000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+            usr_forced_map(&usr_PGD[0], 0x2000000, SHARED_START, PAGE_SIZE);                   // map shared memory (1 page)
 			break;
 		case 1:
-			usr_identity_map(&usr_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for task2
-			krn_identity_map(&krn_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for Kernel
+			// usr_identity_map(&usr_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for task2
+			// krn_identity_map(&krn_PGD[0], (offset_t)task2, (offset_t)task2 + PTE_OFFSET - 1);   // map task2 code for Kernel
 
-            usr_forced_map(&usr_PGD[0], 0x4000000, SHARED_START, PTE_OFFSET);                   // map shared memory (1 page)
+            usr_forced_map(&usr_PGD[0], 0x4000000, SHARED_START, PAGE_SIZE);                   	// map shared memory (1 page)
 			break;
 		default:
 			break;
 	}
 
-    krn_identity_map(&krn_PGD[0], SHARED_START, SHARED_END + PTE_OFFSET - 1); // map shared usr page for Kernel
+    krn_identity_map(&krn_PGD[0], SHARED_START, SHARED_END + PAGE_SIZE); // map shared usr page for Kernel
 }
 
 void task_forced_map(tidx task, offset_t virtual_address_start, offset_t physical_address, offset_t size)
@@ -96,7 +100,7 @@ void task_forced_map(tidx task, offset_t virtual_address_start, offset_t physica
     usr_forced_map(usr_pgd, virtual_address_start, physical_address, size);
 
     // Put in kernel ptb
-    krn_identity_map(krn_pgd, physical_address, physical_address + size - 1);
+    krn_identity_map(krn_pgd, physical_address, physical_address + size);
 
 }
 

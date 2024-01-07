@@ -9,14 +9,19 @@
 #include <extend/print_utils.h>
 #include <extend/userland.h>
 
-#include <extend/timer.h>
+#include <task1.h>
+#include <task2.h>
+
+// #include <intr.h>
 
 /************************************************/
 /**        Goes into ring 3 (usermode)         **/
 /**                                            **/
-/**     _esp_ : stack pointer for new task     **/
+/**     _task_ : ring 3 task code address      **/
+/**     _esp_  : stack pointer for new task    **/
 /************************************************/
-#define go_ring_3(_esp_)                                                        	\
+// go_ring_3(userland, USER_END - 0x4);
+#define go_ring_3(_task_,_esp_)                                                  \
    {                                                                       		\
       set_ds(d3_sel);                                                            \
       set_es(d3_sel);                                                            \
@@ -30,7 +35,7 @@
          "push %3\n"                                                       		\
          "iret\n"                                                          		\
          :                                                                 		\
-         : "i" (d3_sel), "i" (_esp_), "i" (c3_sel), "r" (userland)               \
+         : "i" (d3_sel), "i" (_esp_), "i" (c3_sel), "r" (_task_)                 \
       );                                                                   		\
    }
 
@@ -45,16 +50,34 @@ void tp() {
    // Init the IDT (duh)
    init_idt();
 
-   // Init the PGD (duh)
+   // Init the kernel PGD (duh)
 	init_pgd();
 
-   // TESTING, TO REMOVE
+   // Let's go testing !
    init_task_manager();
-   create_task();
-   int* counter = (int*) 0x414000;
-   *(counter) = 69420;
-   debug("AAAAAAAAAAAAAAA\n");
+   struct task_t* tasks = show_tasks();
 
-   // Jump into ring 3 for testing
-   go_ring_3(USER_END);
+   if (create_task(task1) == 1)
+      debug("FUCK\n");
+
+   debug(
+      "Task %d:\n"
+      "    first page -> 0x%lx\n"
+      "    quantum    -> %d\n"
+      "    is_alive   -> %d\n",
+   tasks->task_id, tasks->first_page_address, tasks->quantum, tasks->is_alive
+   );
+
+   if (create_task(task2) == 1)
+      debug("FUCK\n");
+
+   debug(
+      "Task %d:\n"
+      "    first page -> 0x%lx\n"
+      "    quantum    -> %d\n"
+      "    is_alive   -> %d\n",
+   (tasks+1)->task_id, (tasks+1)->first_page_address, (tasks+1)->quantum, (tasks+1)->is_alive
+   );
+
+   go_ring_3(userland, USER_END - 0x4);
 }

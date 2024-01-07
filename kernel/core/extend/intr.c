@@ -3,6 +3,7 @@
 #include <io.h>
 #include <asm.h>
 #include <debug.h>
+#include <string.h>
 
 #include <extend/memory.h>
 #include <extend/intr.h>
@@ -21,7 +22,7 @@ void syscall_isr() {
 }
 
 void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
-    debug("SYSCALL eax = %08x\n", ctx->gpr.eax.raw);
+    debug("\n-= SYSCALL eax = %08x =-\n", ctx->gpr.eax.raw);
     switch(ctx->gpr.eax.raw) // Which syscall is it ?
     {
         /*
@@ -29,27 +30,25 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             ebx is in task's address space -> need to translate to kernel address space
         */
         case READ_SHARED_SYSCALL:
-            debug("READ_SHARED_SYSCALL\n");
-            offset_t virt = ctx->gpr.ebx.raw;
-            debug("virt ->%p\n", (void*)virt);
+            offset_t virt, phys;
 
-            uint32_t tidx = current_task();
+            debug("READ_SHARED_SYSCALL:\n");
+            virt = ctx->gpr.ebx.raw;
+            debug("\tvirt     -> %p\n", (void*)virt);
 
-            pde32_t* task_PGD = nth_user_pgds(tidx);
-            debug("task_PGD ->%p\n", task_PGD);
+            // uint32_t tidx = current_task();
+
+            // pde32_t* task_PGD = nth_user_pgds(tidx);
+            pde32_t* task_PGD = nth_pgd_gbl(0);
+            debug("\ttask_PGD -> %p\n", task_PGD);
+            
             pte32_t* task_PTB = (pte32_t*)((task_PGD[pd32_idx(virt)].addr) << 12);
-            debug("task_PTB ->%p\n", task_PTB);
-            offset_t phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 10) - 1)) );
-            debug("phys ->%p\n", (void*)phys);
+            debug("\ttask_PTB -> %p\n", task_PTB);
 
-            // Trick for compiling
-            // TODO
-            uint32_t a;
-            a = (uint32_t)phys;
-            a = (uint32_t)tidx;
-            a = (uint32_t)task_PGD;
-            a = (uint32_t)task_PTB;
-            a = a;
+            phys = ( (task_PTB[pt32_idx(virt)].addr) << 12 ) | ( (virt & ((1u << 12) - 1)) );
+            debug("\tphys     -> %p\n", (void*)phys);
+
+            debug("\n\tCNT = %d\n", *((int*)phys));
 
             ctx->gpr.edx.raw = *((int*) phys);
 
@@ -59,7 +58,7 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
             break;
 
     }
-    debug("Exiting SYSCALL\n");
+    debug("-= Exiting SYSCALL =-\n");
 }
 
 void irq0_isr() {
@@ -67,23 +66,38 @@ void irq0_isr() {
       "leave\n\t" "pusha\n\t"
       "mov %esp, %eax\n\t"
       "call irq0_handler\n\t"
-      "movb $0x20, %al\n\t" // Set to PIC control port
-      "movw $0x20, %dx\n\t" // Send EOI to PIC
-      "outb %al, %dx\n\t" 
       "popa\n\t" "iret\n\t"
       );
 }
 
-int tick = 0;
+// int tick = 0;
+// This calls the scheduler
 void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
-    ctx->gpr.ebx.raw =ctx->gpr.ebx.raw;
-    if (++tick % IRQ0_WAITING_TICKS == 0) {
-        // Call scheduler
-        // debug("Switching tasks!\n");
+    debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
+    tidx old_task = current_task();
 
-        // Reset ticks
-        tick -= IRQ0_WAITING_TICKS;
-    }
+    // if (++tick % 18 == 0)
+        debug("Switching tasks!\n");
+        int_ctx_t *new_ctx = schedule();
+        debug("New context retreived\n");
+
+        // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
+        // if (current_task() != old_task) {
+            debug("Saving context\n");
+            save_task_ctx(old_task, ctx);
+            debug("Context saved, loading new context\n");
+            memcpy(new_ctx, ctx, sizeof(int_ctx_t));
+            debug("New context loaded, loading new PGD\n");
+
+            pde32_t *task_PGD = nth_user_pgds(current_task());
+            cr3_reg_t cr3;
+            cr3_pgd_set(&cr3, &task_PGD[0]);
+            set_cr3(cr3);
+            debug("PGD loaded\n");
+        // } else {
+        //     debug("Same task, continuing\n");
+        // }
+}
 
     increment_timer();
 }
