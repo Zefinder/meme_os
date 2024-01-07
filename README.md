@@ -46,11 +46,11 @@ Pour demander la **création d'une tâche**, un appel système est lancé. Voici
 |   2   |      Ecrire sur la sortie standard      |
 |   3   | Ecrire sur l'entrée standard (**TODO**) |
 |   4   |  Demander une page partagée (**TODO**)  |
-|   5   |       Exécuter du code (**TODO**)       |
+|   5   |              Eteindre l'OS              |
 |   6   |        Lire la mémoire partagée         |
 |   7   |     Ecrire sur la mémoire partagée      |
 |   8   |     Afficher le tableau des tâches      |
-|   9   |       Start scheduling (**TODO**)       |
+|   9   |       Commencer l'ordonnancement        |
 
 ### Le kernel
 

@@ -36,3 +36,13 @@ void write_shared_memory_syscall(int* address, int value) {
 void show_running_tasks_syscall() {
     asm volatile ("int %1\n\t" :: "a" (SHOW_RUNNING_TASKS) , "i" (INT_SYSCALL)); 
 }
+
+// Syscall9
+void start_scheduling_syscall() {
+    asm volatile ("int %1\n\t" :: "a" (START_SCHEDULING_SYSCALL) , "i" (INT_SYSCALL)); 
+}
+
+// Syscall10
+void shutdown_syscall() {
+    asm volatile ("int %1\n\t" :: "a" (SHUTDOWN_SYSCALL) , "i" (INT_SYSCALL)); 
+}

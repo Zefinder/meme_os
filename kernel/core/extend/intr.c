@@ -12,6 +12,8 @@
 #include <extend/task_manager.h>
 #include <extend/timer.h>
 
+int schedule_enabled = 0;
+
 void syscall_isr() {
    asm volatile (
       "leave\n\t""pusha\n\t"
@@ -114,6 +116,18 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
                     task.quantum,
                     task.is_alive ? yes : no);
             }
+            break;  
+
+        case START_SCHEDULING_SYSCALL:
+            // debug("START_SCHEDULING_SYSCALL:\n");
+            schedule_enabled = 1;
+            break;
+
+        case SHUTDOWN_SYSCALL:
+            debug("%s", "\nShuting down memeOS, we hope that you had a pleaseant flight and wish you a good day!\n");
+            while(1) halt();
+            break;
+
         default:
             break;
     }
@@ -125,37 +139,42 @@ void irq0_isr() {
       "leave\n\t" "pusha\n\t"
       "mov %esp, %eax\n\t"
       "call irq0_handler\n\t"
+      "movb $0x20, %al\n\t" // Set to PIC control port
+      "movw $0x20, %dx\n\t" // Send EOI to PIC
+      "outb %al, %dx\n\t" 
       "popa\n\t" "iret\n\t"
       );
 }
 
-// int tick = 0;
+int tick = 0;
 // This calls the scheduler
 void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
-    debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
-    tidx old_task = current_task();
+    // tidx old_task = current_task();
 
-    // if (++tick % 18 == 0)
-        debug("Switching tasks!\n");
-        int_ctx_t *new_ctx = schedule();
-        debug("New context retreived\n");
+    if (schedule_enabled) {
+        if (++tick % IRQ0_WAITING_TICKS == 0) {
+            debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
+            debug("Switching tasks!\n");
+            // int_ctx_t *new_ctx = schedule();
+            debug("New context retreived\n");
 
-        // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
-        // if (current_task() != old_task) {
+            // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
+            // if (current_task() != old_task) {
             debug("Saving context\n");
-            save_task_ctx(old_task, ctx);
+            // save_task_ctx(old_task, ctx);
             debug("Context saved, loading new context\n");
-            memcpy(new_ctx, ctx, sizeof(int_ctx_t));
+            // memcpy(new_ctx, ctx, sizeof(int_ctx_t));
             debug("New context loaded, loading new PGD\n");
 
-            pde32_t *task_PGD = nth_user_pgds(current_task());
-            cr3_reg_t cr3;
-            cr3_pgd_set(&cr3, &task_PGD[0]);
-            set_cr3(cr3);
-            debug("PGD loaded\n");
-        // } else {
-        //     debug("Same task, continuing\n");
-        // }
+            // pde32_t *task_PGD = nth_user_pgds(current_task());
+            // cr3_reg_t cr3;
+            // cr3_pgd_set(&cr3, &task_PGD[0]);
+            // set_cr3(cr3);
+            // debug("PGD loaded\n");
+            // } else {
+            //     debug("Same task, continuing\n");
+        }
+    }
 
     increment_timer();
 }
@@ -182,5 +201,5 @@ void init_idt(void)
     
     int interrupt_mask = in(PIC_MASTER_PORT); // Reading PIC master port
     out(PIC_MASTER_PORT, interrupt_mask & IRQ0_MASK_ENABLE); // Enabling IRQ0 in PIC
-    // force_interrupts_on();
+    force_interrupts_on();
 }

@@ -33,7 +33,7 @@
 
 // IRQ constants
 #define PIT_CHANNEL0_FREQUENCY  18  // Hz
-#define IRQ0_WAITING_TICKS      3   // Divides frequency
+#define IRQ0_WAITING_TICKS      18  // Divides frequency (18 is 1 per second)
 
 void init_idt(void);
 

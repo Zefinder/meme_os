@@ -1,7 +1,6 @@
 #include <extend/userland.h>
 #include <extend/syscall.h>
-#include <debug.h>
-
+#include <extend/timer.h>
 #include <task1.h>
 #include <task2.h>
 
@@ -27,6 +26,15 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    write_shared_memory_syscall(compteur_address, compteur);
    int result = read_shared_memory_syscall(compteur_address);
    write_stdout_syscall("Value of read counter = %d\n", result);
+
+   // Enable schedule
+   start_scheduling_syscall();
+
+   // Wait for 10 seconds doing nothing...
+   wait(10);
+
+   // Shutdown
+   shutdown_syscall();
 
    // Priviledged, should provoke an exception
    // asm volatile ("mov %eax, %cr0\n\t");
