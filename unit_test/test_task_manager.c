@@ -1,6 +1,8 @@
 #include <test_utils.h>
 #include <extend/task_manager.h>
 
+#define create_task() create_task((void*) 0x600000)
+
 void test_task_manager_init() {
     init_task_manager();
     struct task_t* got_tasks = show_tasks();

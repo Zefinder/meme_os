@@ -11,7 +11,7 @@ untestable_functions="untestable_functions.c"
 filenames=($(ls | grep .c | cut -d' ' -f1))
 
 CC="gcc"
-OPTIONS="-fms-extensions -rdynamic -finstrument-functions -Wno-builtin-declaration-mismatch"
+OPTIONS="-m32 -fno-pic -fms-extensions -rdynamic -finstrument-functions -Wno-builtin-declaration-mismatch"
 INCLUDES="-I../kernel/include -I."
 objects=$@
 

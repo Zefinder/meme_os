@@ -13,6 +13,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Installs GCC multilib
+      run: sudo apt-get install gcc-multilib
+
     - name: Add +x to script
       run: chmod +x unit_test/test_script.sh 
 

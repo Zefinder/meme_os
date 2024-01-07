@@ -45,7 +45,7 @@ int create_task(void *task) {
     }
 
     // Else we ask for a user page
-    offset_t first_page_index = 1;//map_user_page(task_index);
+    offset_t first_page_index = 1; // map_user_page(task_index);
     
     // If address is 0 then repush the task index and we return 1
     if (first_page_index == 0ul) {
@@ -55,7 +55,7 @@ int create_task(void *task) {
     
     // We create a task struct with the address within the good index
     running_tasks[task_index].task_id = next_task_id;
-    running_tasks[task_index].first_page_address = first_page_index;
+    running_tasks[task_index].first_page_address = pop_page_address();;
     running_tasks[task_index].second_page_address = 0;
     running_tasks[task_index].has_second_page = 0;
     running_tasks[task_index].quantum = DEFAULT_QUANTA;

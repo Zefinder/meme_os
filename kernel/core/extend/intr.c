@@ -10,6 +10,7 @@
 #include <extend/syscall.h>
 #include <extend/pagemem.h>
 #include <extend/task_manager.h>
+#include <extend/keyboard.h>
 #include <extend/timer.h>
 
 int schedule_enabled = 0;
@@ -78,11 +79,14 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
         */
         case WRITE_STDOUT_SYSCALL:
             // debug("WRITE_STDOUT_SYSCALL:\n");
-            int format_address = translate_address(ctx->gpr.ebx.raw);
-            int params_address = translate_address(ctx->gpr.ecx.raw);
-            char* format = (char*) format_address;
-            va_list params = *(va_list*) params_address;
-            __vprintf(format, params);
+            // If console mode, then ignored
+            if (!is_console_enabled()) {
+                int format_address = translate_address(ctx->gpr.ebx.raw);
+                int params_address = translate_address(ctx->gpr.ecx.raw);
+                char* format = (char*) format_address;
+                va_list params = *(va_list*) params_address;
+                __vprintf(format, params);
+            }
             break;
 
         /*
@@ -160,21 +164,21 @@ int tick = 0;
 // This calls the scheduler
 void __regparm__(1) irq0_handler(int_ctx_t *ctx) {
     // tidx old_task = current_task();
-
+    ctx=ctx;
     if (schedule_enabled) {
         if (++tick % IRQ0_WAITING_TICKS == 0) {
-            debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
-            debug("Switching tasks!\n");
+            // debug("\n-= IRQ0 ebx = %08x =-\n", ctx->gpr.ebx.raw);
+            // // debug("Switching tasks!\n");
             // int_ctx_t *new_ctx = schedule();
-            debug("New context retreived\n");
+            // debug("New context retreived\n");
 
             // If we switched tasks, save old task's context, load new task's context in stack for popa; iret
             // if (current_task() != old_task) {
-            debug("Saving context\n");
+            // debug("Saving context\n");
             // save_task_ctx(old_task, ctx);
-            debug("Context saved, loading new context\n");
+            // debug("Context saved, loading new context\n");
             // memcpy(new_ctx, ctx, sizeof(int_ctx_t));
-            debug("New context loaded, loading new PGD\n");
+            // debug("New context loaded, loading new PGD\n");
 
             // pde32_t *task_PGD = nth_user_pgds(current_task());
             // cr3_reg_t cr3;
@@ -193,6 +197,29 @@ void set_interval() {
     out(PIT_COMMAND_REGISTER, PIT_CHANNEL_0_SEL | PIT_ACCESS_MODE_BOTH | PIT_OPERATING_MODE_3 | PIT_BINARY_MODE);
 }
 
+void irq1_isr() {
+   asm volatile (
+      "leave\n\t" "pusha\n\t"
+      "mov %esp, %eax\n\t"
+      "call irq1_handler\n\t"
+      "movb $0x20, %al\n\t" // Set to PIC control port
+      "movw $0x20, %dx\n\t" // Send EOI to PIC
+      "outb %al, %dx\n\t" 
+      "popa\n\t" "iret\n\t"
+      );
+}
+
+void __regparm__(1) irq1_handler(int_ctx_t *ctx) {
+    // For compilation purpose
+    ctx = ctx;
+
+    // Reading from keyboard
+    int key_code = in(KEYBOARD_PORT);
+
+    // Send to keyboard
+    process_key(key_code);
+}
+
 void init_idt(void)
 {
 	idt_reg_t idtr;
@@ -204,12 +231,17 @@ void init_idt(void)
 	idtr.desc[INT_IRQ0].offset_2 = (uint16_t)((uint32_t)irq0_isr >> 16);
     idtr.desc[INT_IRQ0].dpl = SEG_SEL_KRN;
 
+    // Setup IRQ1 ISR
+	idtr.desc[INT_IRQ1].offset_1 = (uint16_t)((uint32_t)irq1_isr & 0xffff);
+	idtr.desc[INT_IRQ1].offset_2 = (uint16_t)((uint32_t)irq1_isr >> 16);
+    idtr.desc[INT_IRQ1].dpl = SEG_SEL_KRN;
+
     // Setup syscall via interrupt
 	idtr.desc[INT_SYSCALL].offset_1 = (uint16_t)((uint32_t)syscall_isr & 0xffff);
 	idtr.desc[INT_SYSCALL].offset_2 = (uint16_t)((uint32_t)syscall_isr >> 16);
     idtr.desc[INT_SYSCALL].dpl = SEG_SEL_USR;
     
     int interrupt_mask = in(PIC_MASTER_PORT); // Reading PIC master port
-    out(PIC_MASTER_PORT, interrupt_mask & IRQ0_MASK_ENABLE); // Enabling IRQ0 in PIC
+    out(PIC_MASTER_PORT, interrupt_mask & IRQs_MASK_ENABLE); // Enabling IRQ0 in PIC
     force_interrupts_on();
 }
