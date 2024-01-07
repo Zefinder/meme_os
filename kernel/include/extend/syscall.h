@@ -3,6 +3,7 @@
 
 // Syscalls, move later to other file of defines
 #define CREATE_NEW_TASK_SYSCALL     0
+#define KILL_TASK_SYSCALL           1
 #define WRITE_STDOUT_SYSCALL        2
 #define SHUTDOWN_SYSCALL            5
 #define READ_SHARED_SYSCALL         6
@@ -12,6 +13,9 @@
 
 // Syscall0
 int create_new_task_syscall(void* task_address);
+
+// Syscall1
+int kill_task_syscall();
 
 // Syscall2
 void write_stdout_syscall(const char *format, ...);

@@ -55,10 +55,20 @@ void __regparm__(1) syscall_handler(int_ctx_t *ctx) {
         */
         case CREATE_NEW_TASK_SYSCALL:
             // debug("CREATE_NEW_TASK_SYSCALL:\n");
-            // TODO A faire ssi pas kernel qui le lance...
+            // TODO A faire ssi pas dans cr3 kernel
             // int task_address = translate_address(ctx->gpr.ebx.raw);
             int task_address = ctx->gpr.ebx.raw;
             ctx->gpr.edx.raw = create_task((void*) task_address);
+            break;
+        
+        /*
+            Kills current task. This is automatically called when a 
+            task hits return.
+        */
+        case KILL_TASK_SYSCALL:
+            // debug("KILL_TASK_SYSCALL:\n");
+            tidx current_index = current_task();
+            ctx->gpr.edx.raw = end_task(current_index);
             break;
 
         /*

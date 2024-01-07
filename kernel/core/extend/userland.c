@@ -28,10 +28,19 @@ void __attribute__((section(".task2"),aligned(4))) userland()
    write_stdout_syscall("Value of read counter = %d\n", result);
 
    // Enable schedule
-   start_scheduling_syscall();
+   start_scheduing_syscall();
 
    // Wait for 10 seconds doing nothing...
    wait(10);
+
+   // write_stdout_syscall("%s\n", "Killing first task");
+   // int task_kill;
+   // if ((task_kill = kill_task_syscall()) != 0) {
+   //    write_stdout_syscall("Killing first task failed (code=%d)\n", task_kill);
+   // }
+
+   // // Show running tasks again before exit
+   // show_running_tasks_syscall();
 
    // Shutdown
    shutdown_syscall();

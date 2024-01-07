@@ -7,8 +7,16 @@
 int create_new_task_syscall(void* task_address) {
     int creation_value;
     // Result in edx
-    asm volatile ("int %3\n\t" : "=d"(creation_value) : "a" (CREATE_NEW_TASK_SYSCALL), "b" (task_address) , "i" (INT_SYSCALL));
+    asm volatile ("int %3\n\t" : "=d"(creation_value) : "a" (CREATE_NEW_TASK_SYSCALL), "b" (task_address), "i" (INT_SYSCALL));
     return creation_value;
+}
+
+// Syscall1
+int kill_task_syscall() {
+    int kill_value;
+    // Result in edx
+    asm volatile ("int %2\n\t" : "=d"(kill_value) : "a" (KILL_TASK_SYSCALL), "i" (INT_SYSCALL));
+    return kill_value;
 }
 
 // Syscall2
