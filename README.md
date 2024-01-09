@@ -64,28 +64,31 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 
 **Toute la mémoire mappée est *identity mappée*.**
 
-| Adresse de début | Adresse de fin | Utilité             |    Accès kernel    | Accès utilisateur  |
-| :--------------: | :------------: | :------------------ | :----------------: | :----------------: |
-|     0x300000     |    0x33FFFF    | Mémoire kernel      | :heavy_check_mark: |        :x:         |
-|     0x340000     |    0x34FFFF    | Pile kernel         | :heavy_check_mark: |        :x:         |
-|     0x350000     |    0x366FFF    | PGD et PTB          | :heavy_check_mark: |        :x:         |
-|     0x367000     |    0x36FFFF    | Non utilisé         |        :x:         |        :x:         |
-|     0x370000     |    0x370027    | GDT                 | :heavy_check_mark: |        :x:         |
-|     0x370028     |    0x37FFFF    | Non utilisé         |        :x:         |        :x:         |
-|     0x380000     |    0x382088    | TSS                 | :heavy_check_mark: |        :x:         |
-|     0x382089     |    0x3FFFFF    | Non utilisé         |        :x:         |        :x:         |
-|     0x400000     |    0x413FFF    | Mémoire utilisateur | :heavy_check_mark: | :heavy_check_mark: |
-|     0x414000     |    0x4FFFFF    | Mémoire partagée    | :heavy_check_mark: | :heavy_check_mark: |
-|     0x500000     |    0x7FFFFF    | Code utilisateur    | :heavy_check_mark: | :heavy_check_mark: |
+| Adresse de début | Adresse de fin | Utilité                  |    Accès kernel    | Accès utilisateur  |
+| :--------------: | :------------: | :----------------------: | :----------------: | :----------------: |
+|     0x300000     |    0x33FFFF    | Mémoire kernel           | :heavy_check_mark: |        :x:         |
+|     0x340000     |    0x34FFFF    | Pile kernel              | :heavy_check_mark: |        :x:         |
+|     0x350000     |    0x366FFF    | PGD et PTB               | :heavy_check_mark: |        :x:         |
+|     0x367000     |    0x36FFFF    | Non utilisé              |        :x:         |        :x:         |
+|     0x370000     |    0x370027    | GDT                      | :heavy_check_mark: |        :x:         |
+|     0x370028     |    0x37FFFF    | Non utilisé              |        :x:         |        :x:         |
+|     0x380000     |    0x382088    | TSS                      | :heavy_check_mark: |        :x:         |
+|     0x382089     |    0x3FFFFF    | Non utilisé              |        :x:         |        :x:         |
+|     0x400000     |    0x413FFF    | Mémoire utilisateur      | :heavy_check_mark: | :heavy_check_mark: |
+|     0x414000     |    0x4FFFFF    | Mémoire partagée         | :heavy_check_mark: | :heavy_check_mark: |
+|     0x500000     |    0x5FFFFF    | Code partagé utilisateur | :heavy_check_mark: | :heavy_check_mark: |
+|     0x600000     |    0x7FFFFF    | Code utilisateur         | :heavy_check_mark: | :heavy_check_mark: |
 
 - La **mémoire kernel** est la mémoire utilisée par le kernel pour stocker ses fonctions et autres variables fixes
 - La **pile kernel** est l'espace utilisé pour la pile du pépin, rien de plus...
-- Les **PGD et PTB** sont stockées après la pile. Il y a au maximum 11 PGD, donc les PGD s'arrêtent à `0x35AFFF`. L'espace kernel à paginer (de `0x300000` à `0x36FFFF` et de `0x400000` à `0x4FFFFF`) demande 2 tables de pages. Chaque tâche utilisateur demande une table de pages (2 pages de `0x400000` à `0x413FFF` et tout de `0x414000` à `0x4FFFFF`). On a donc au maximum 12 tables de page. Une PGD a une taille de **0x1000** et une PTB aussi, donc on a besoin de 23*0x1000 = **0x17000** d'espace pour PGD et PTB.
+- Les **PGD et PTB** sont stockées après la pile. Il y a au maximum 11 PGD, donc les PGD s'arrêtent à `0x35AFFF`. Le kernel a besoin de deux PTB pour paginer avant et après. Chaque tâche utilisateur a besoin d'une PTB (toutes la mémoire accessible est au dessus de 0x400000). On a donc au maximum 12 tables de page. Une PGD a une taille de **0x1000** et une PTB aussi, donc on a besoin de 23*0x1000 = **0x17000** d'espace pour PGD et PTB.
 - L'**espace non utilisé** est là pour avoir une cohérence entre l'espace utilisateur et l'espace pépin. Il peut servir à ajouter des tâches simultanées.
-- La **mémoire utilisateur** est l'endroit où les tâches pourront vivre et demander des pages supplémentaires, le tout dans une harmonie toute relative.
+- La **mémoire utilisateur** est l'endroit où les tâches (leurs piles) pourront vivre, le tout dans une harmonie toute relative.
 - La **mémoire partagée** est un mécanisme de partage de données entre tous les utilisateurs. Avec un appel système, une tâche peut demander une page dans cet espace et pouvoir écrire dedans. Pour avoir plus de détails il faut regarder la section suivante !
+- Le **code utilisateur partagé** est là pour le code devant être mappé par toutes les tâches (exemple le code de changement de CR3)
+- Le **code utilisateur** sert à accueillir le code des tâches
 
-### Mémoire partagée (**TODO**)
+### Mémoire partagée
 
 La **mémoire partagée** est un espace mémoire commun à tous les utilisateurs. Tout le monde a au minimum le droit de la lire au moyen d'un appel système de lecture. Elle n'est donc pas appropriée au stockage des mots de passe (sauf si on veut vivre dangereusement !). Les utilisateurs et le kernel peuvent demander jusqu'à **21 pages** chacun, soit `0x15000` d'espace maximum par tâche (+ pépin).
 
