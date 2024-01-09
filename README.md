@@ -85,11 +85,22 @@ L'**ordonnanceur** est un simple mécanisme de **round-robin** sur les tâches q
 - La **mémoire utilisateur** est l'endroit où les tâches pourront vivre et demander des pages supplémentaires, le tout dans une harmonie toute relative.
 - La **mémoire partagée** est un mécanisme de partage de données entre tous les utilisateurs. Avec un appel système, une tâche peut demander une page dans cet espace et pouvoir écrire dedans. Pour avoir plus de détails il faut regarder la section suivante !
 
-### Mémoire partagée
+### Mémoire partagée (**TODO**)
 
 La **mémoire partagée** est un espace mémoire commun à tous les utilisateurs. Tout le monde a au minimum le droit de la lire au moyen d'un appel système de lecture. Elle n'est donc pas appropriée au stockage des mots de passe (sauf si on veut vivre dangereusement !). Les utilisateurs et le kernel peuvent demander jusqu'à **21 pages** chacun, soit `0x15000` d'espace maximum par tâche (+ pépin).
 
 Lors du demande d'une page partagée, on peut la rendre accessible à **l'écriture** des autres utilisateurs et même à **l'exécution** ! Vos plus belles ROP-chains commencent ici !
+
+## Modes de l'OS
+
+### Mode tâches
+
+Le **mode tâches** est un mode qui se concentre sur la sortie des tâches qui tournent actuellement sur l'OS. Toutes les **sorties** sur la console sont affichées et mélangées. C'est le **mode de base** de MemeOS ! 
+
+### Mode de commandes
+
+Le **mode de commandes** de MemeOS est un mode interractif. Il permet d'entrer des commandes et d'interragir avec l'OS. Il y a seulement 4 commandes mais c'est **suffisant** pour montrer que tout marche !
+Pour entrer en **mode de commandes**, il faut appuyer sur la touche **ENTREE** quand on est dans le **mode tâches**
 
 ## Remerciements
 
